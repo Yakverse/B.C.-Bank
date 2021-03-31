@@ -18,7 +18,7 @@ public class Bot{
     public static String prefix = "$";
 
     public static void main(String[] args) throws LoginException {
-        jda = JDABuilder.createDefault("ODI2NTc3NDQwNTQ5NTAyOTc2.YGOgOg.IsEfs0gYfVxaj3wQJRr--QJAKgc").build();
+        jda = JDABuilder.createDefault("Njc5MTUzNzU0MTc1NzAxMDMy.XktNOQ.iaFHfe8Xcr-Eo6e9v3tJJWSehb0").build();
         jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.playing("o Charlão na cama"));
         jda.addEventListener(new Commands());
     }
