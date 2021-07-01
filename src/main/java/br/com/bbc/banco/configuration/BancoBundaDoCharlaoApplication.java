@@ -1,4 +1,4 @@
-package br.com.bbc.banco;
+package br.com.bbc.banco.configuration;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
