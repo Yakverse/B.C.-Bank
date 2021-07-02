@@ -26,7 +26,7 @@ public class Commands {
     }
 
     public User checkUser(MessageReceivedEvent event){
-        Long id = event.getMember().getIdLong();
+        Long id = event.getAuthor().getIdLong();
         User user = this.userService.findById(id);
         if (user == null){
             user = this.criarUsuario(id);
@@ -57,7 +57,7 @@ public class Commands {
         BigDecimal saldoAtual = user.getSaldo();
         BigDecimal novoSaldo = saldoAtual.add(valor);
         user.setSaldo(novoSaldo);
-        this.userService.update(user, event.getMember().getIdLong());
+        this.userService.update(user, event.getAuthor().getIdLong());
 
         this.mostrarSaldo(event);
     }
@@ -69,7 +69,7 @@ public class Commands {
         BigDecimal saldoAtual = user.getSaldo();
         BigDecimal novoSaldo = saldoAtual.subtract(valor);
         user.setSaldo(novoSaldo);
-        this.userService.update(user, event.getMember().getIdLong());
+        this.userService.update(user, event.getAuthor().getIdLong());
 
         this.mostrarSaldo(event);
     }
@@ -98,7 +98,7 @@ public class Commands {
         embed.setTitle("Valor Inválido");
         embed.addField("Coloca um valor válido imbecil","Você é burro",false);
         embed.setColor(0x00000);
-        embed.setFooter("Solicitado por " + event.getMember().getUser().getName(), event.getMember().getUser().getAvatarUrl());
+        embed.setFooter("Solicitado por " + event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
 
         event.getChannel().sendMessage(embed.build()).queue();
     }

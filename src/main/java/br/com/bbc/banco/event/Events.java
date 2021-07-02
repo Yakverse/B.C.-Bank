@@ -112,7 +112,7 @@ public class Events extends ListenerAdapter {
 
                     List<User> users = event.getMessage().getMentionedUsers();
                     if(users.size() > 1) throw new Exception();
-                    if(event.getMember().getUser().getIdLong() == users.get(0).getIdLong()) throw new Exception();
+                    if(event.getAuthor().getIdLong() == users.get(0).getIdLong()) throw new Exception();
                     String secondWord = args[1].replace(',','.');
                     BigDecimal valor = BigDecimal.valueOf( Double.parseDouble(secondWord));
                     if (valor.compareTo(BigDecimal.ZERO) <= 0) throw new Exception();

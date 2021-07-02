@@ -10,9 +10,9 @@ public class Embeds {
     public static EmbedBuilder saldoEmbed(MessageReceivedEvent event, User user, String mensagem, int cor){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("💰 Saldo Atual 💰");
-        embed.addField(user.getSaldo().toString(), mensagem, false);
+        embed.addField("BC$ " + user.getSaldo().toString(), mensagem, false);
         embed.setColor(cor);
-        embed.setFooter("Solicitado por " + event.getMember().getUser().getName(), event.getMember().getUser().getAvatarUrl());
+        embed.setFooter("Solicitado por " + event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
 
         return embed;
     }
