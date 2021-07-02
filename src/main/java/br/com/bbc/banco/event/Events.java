@@ -2,6 +2,7 @@ package br.com.bbc.banco.event;
 
 import br.com.bbc.banco.command.Commands;
 import br.com.bbc.banco.enumeration.BotEnumeration;
+import lombok.SneakyThrows;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -23,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class Events extends ListenerAdapter {
@@ -35,6 +37,7 @@ public class Events extends ListenerAdapter {
         System.out.printf("[%s] Bot Online!%n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss")));
     }
 
+    @SneakyThrows
     @Override
     public void onSlashCommand(SlashCommandEvent event) {
         switch (event.getName()){
@@ -51,9 +54,13 @@ public class Events extends ListenerAdapter {
                         .queue(); // Queue both reply and edit
                 break;
 
+            case "convite":
+                event.reply("https://discord.com/api/oauth2/authorize?client_id=826577440549502976&permissions=8&scope=applications.commands%20bot")
+                        .queue();
+                break;
+
             case "saldo":
-                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true) // reply or acknowledge
-                        .queue(); // Queue both reply and edit
+                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
                 break;
         }
 
@@ -72,49 +79,48 @@ public class Events extends ListenerAdapter {
 
         if(args[0].startsWith(BotEnumeration.PREFIX.getValue())){
 
-            // Saldo
-            if(firstWord.equalsIgnoreCase("saldo")){
-                channel.sendMessage(commands.mostrarSaldo(author)).queue();
+            try {
+
+                // Criar conta
+                if (firstWord.equalsIgnoreCase("criar")) {
+                    commands.criarUsuario(author.getIdLong());
+                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
+                }
+
+                // Saldo
+                if (firstWord.equalsIgnoreCase("saldo")) {
+                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
+                }
+
+                // Depositar
+                if (firstWord.equalsIgnoreCase("depositar")) {
+                    commands.depositar(author, args[1]);
+                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
+                }
+
+                //Sacar
+                if (firstWord.equalsIgnoreCase("sacar")) {
+                    if (args.length > 2) throw new Exception();
+
+                    commands.sacar(author, args[1]);
+                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
+                }
             }
 
-            // Depositar
-            if(firstWord.equalsIgnoreCase("depositar")){
-                try{
-                    commands.depositar(author, channel, args[1]);
-                }
-                catch (Exception e){
-                    commands.erro(event);
-                }
-            }
-
-            //Sacar
-            if(firstWord.equalsIgnoreCase("sacar")){
-                try{
-                    if(args.length > 2) throw new Exception();
-
-                    commands.sacar(author, channel, args[1]);
-                }
-                catch (Exception e){
-                    commands.erro(event);
-                }
-            }
-
-            if(firstWord.equalsIgnoreCase("transferir")){
-                try{
-                    if(args.length > 3) throw new Exception();
+                //Transferir
+                if (firstWord.equalsIgnoreCase("transferir")) {
+                    if (args.length > 3) throw new Exception();
 
                     List<User> users = event.getMessage().getMentionedUsers();
-                    if(users.size() > 1) throw new Exception();
+                    if (users.size() > 1) throw new Exception();
 
-                    commands.transferir(author,args[1],users.get(0));
+                    commands.transferir(author, args[1], users.get(0));
+                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
                 }
-                catch (Exception e){
-                    commands.erro(event);
-                }
+
+            } catch (Exception e) {
+                commands.erro(author, event.getChannel());
             }
-
-
-
         }
     }
 }

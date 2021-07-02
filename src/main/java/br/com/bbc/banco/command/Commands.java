@@ -7,13 +7,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Component
 public class Commands {
@@ -51,7 +48,7 @@ public class Commands {
         if (valor.compareTo(BigDecimal.ZERO) <= 0) throw new Exception();
     }
 
-    public void depositar(net.dv8tion.jda.api.entities.User author, MessageChannel channel, String valorString) throws Exception {
+    public void depositar(net.dv8tion.jda.api.entities.User author, String valorString) throws Exception {
         BigDecimal valor = this.convertStringToBigDecimal(valorString);
         this.checkValor(valor);
 
@@ -61,13 +58,10 @@ public class Commands {
         BigDecimal novoSaldo = saldoAtual.add(valor);
         user.setSaldo(novoSaldo);
         this.userService.update(user, author.getIdLong());
-
-        MessageEmbed embed = this.mostrarSaldo(author);
-        channel.sendMessage(embed).queue();
     }
 
 
-    public void sacar(net.dv8tion.jda.api.entities.User author, MessageChannel channel, String valorString) throws Exception {
+    public void sacar(net.dv8tion.jda.api.entities.User author, String valorString) throws Exception {
         BigDecimal valor = this.convertStringToBigDecimal(valorString);
         this.checkValor(valor);
         User user = checkUser(author);
@@ -76,9 +70,6 @@ public class Commands {
         BigDecimal novoSaldo = saldoAtual.subtract(valor);
         user.setSaldo(novoSaldo);
         this.userService.update(user, author.getIdLong());
-
-        MessageEmbed embed = this.mostrarSaldo(author);
-        channel.sendMessage(embed).queue();
     }
 
     public void transferir(net.dv8tion.jda.api.entities.User author, String valorString, net.dv8tion.jda.api.entities.User transferido) throws Exception {
@@ -110,9 +101,9 @@ public class Commands {
         embed.setTitle("Valor Inválido");
         embed.addField("Coloca um valor válido imbecil","Você é burro",false);
         embed.setColor(0x00000);
-        embed.setFooter("Solicitado por " + event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
 
-        event.getChannel().sendMessage(embed.build()).queue();
+        channel.sendMessage(embed.build()).queue();
     }
 
 }

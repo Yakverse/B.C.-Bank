@@ -20,7 +20,6 @@ public class UserService {
     }
 
     public User update(User user, Long id){
-        User checkUser = this.userRepository.findById(id).orElse(null);
         return this.userRepository.save(user);
     }
 }

@@ -13,5 +13,6 @@ import java.math.BigDecimal;
 public class User {
     @Id
     private Long id;
-    private BigDecimal saldo = BigDecimal.ZERO;
+    private BigDecimal saldo = new BigDecimal(1000);
+    private Boolean isAdmin = false;
 }

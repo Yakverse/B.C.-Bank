@@ -59,6 +59,14 @@ public class Bot {
         );
 
         commands.addCommands(
+                new CommandData("convite", "Te envia o convite para o bot")
+        );
+
+        commands.addCommands(
+                new CommandData("criar", "Criar conta no BBC")
+        );
+
+        commands.addCommands(
                 new CommandData("saldo", "Mostra o seu saldo")
         );
 
