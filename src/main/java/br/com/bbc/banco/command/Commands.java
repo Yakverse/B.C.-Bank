@@ -4,7 +4,9 @@ import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.model.User;
 import br.com.bbc.banco.service.UserService;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,24 @@ public class Commands {
         User user = new User();
         user.setId(id);
         return this.userService.create(user);
+    }
+
+    public User checkUser(MessageReceivedEvent event){
+        Long id = event.getMember().getIdLong();
+        User user = this.userService.findById(id);
+        if (user == null){
+            user = this.criarUsuario(id);
+        }
+        return user;
+    }
+
+    public User checkUserDiscord(net.dv8tion.jda.api.entities.User usuario){
+        Long id = usuario.getIdLong();
+        User user = this.userService.findById(id);
+        if (user == null){
+            user = this.criarUsuario(id);
+        }
+        return user;
     }
 
 
