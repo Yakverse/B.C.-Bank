@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,4 +16,7 @@ public class User {
     private Long id;
     private BigDecimal saldo = new BigDecimal(1000);
     private Boolean isAdmin = false;
+
+    @OneToMany(mappedBy = "user")
+    private List<Transaction> transaction;
 }
