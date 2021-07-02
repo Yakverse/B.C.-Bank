@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 
 @Component
 public class Commands {
@@ -106,4 +107,8 @@ public class Commands {
         channel.sendMessage(embed.build()).queue();
     }
 
+    public MessageEmbed mostrarExtrato(net.dv8tion.jda.api.entities.User author){
+        User user = checkUser(author);
+        return Embeds.extratoEmbed(author, user, "EM CONSTRUÇÃO", 0x00000).build();
+    }
 }

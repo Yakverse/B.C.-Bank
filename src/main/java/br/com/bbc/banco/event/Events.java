@@ -83,6 +83,10 @@ public class Events extends ListenerAdapter {
                 event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
                 break;
 
+            case "extrato":
+                event.replyEmbeds(commands.mostrarExtrato(event.getUser())).setEphemeral(true).queue();
+                break;
+
         }
 
     }

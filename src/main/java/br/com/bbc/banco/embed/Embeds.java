@@ -10,7 +10,17 @@ public class Embeds {
     public static EmbedBuilder saldoEmbed(net.dv8tion.jda.api.entities.User author, User user, String mensagem, int cor){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("💰 Saldo Atual 💰");
-        embed.addField("BCT$ " + user.getSaldo().toString(), mensagem, false);
+        embed.addField("BC$ " + user.getSaldo().toString(), mensagem, false);
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder extratoEmbed(net.dv8tion.jda.api.entities.User author, User user, String mensagem, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("💰 Saldo Atual 💰");
+        embed.addField("EM CONSTRUÇÃO", mensagem, false);
         embed.setColor(cor);
         embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
 
