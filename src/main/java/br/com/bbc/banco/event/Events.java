@@ -1,15 +1,23 @@
-package br.com.bbc.banco;
+package br.com.bbc.banco.event;
 
+import br.com.bbc.banco.command.Commands;
+import br.com.bbc.banco.enumeration.BotEnumeration;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Commands extends ListenerAdapter {
+@Component
+public class Events extends ListenerAdapter {
+
+    @Autowired
+    private Commands commands;
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -18,19 +26,18 @@ public class Commands extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        if(event.getMessage().getAuthor().isBot()) return;
+
         String[] args = event.getMessage().getContentRaw().split(" ");
+        String firstWord = args[0].substring(1);
 
-        // Saldo
-        if((args[0]).equalsIgnoreCase(Bot.prefix + "saldo")){
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.setTitle("💰 Saldo Atual 💰");
-            embed.setDescription("Saldo sla");
-            embed.addField("Teste", "AAAA", false);
-            embed.setColor(0x00000);
-            embed.setFooter("Solicitado por " + event.getMember().getUser().getName(), event.getMember().getUser().getAvatarUrl());
+        if(args[0].startsWith(BotEnumeration.PREFIX.getValue())){
+            // Saldo
+            if(firstWord.equalsIgnoreCase("saldo")){
+                commands.mostrarSaldo(event);
+            }
 
-            event.getChannel().sendTyping().queue();
-            event.getChannel().sendMessage(embed.build()).queue();
         }
+
     }
 }
