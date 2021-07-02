@@ -18,4 +18,9 @@ public class UserService {
     public User findById(Long id){
         return this.userRepository.findById(id).orElse(null);
     }
+
+    public User update(User user, Long id){
+        User checkUser = this.userRepository.findById(id).orElse(null);
+        return this.userRepository.save(user);
+    }
 }
