@@ -62,6 +62,27 @@ public class Events extends ListenerAdapter {
             case "saldo":
                 event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
                 break;
+
+            case "criar":
+                commands.criarUsuario(event.getUser().getIdLong());
+                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
+                break;
+
+            case "depositar":
+                commands.depositar(event.getUser(), event.getOption("valor").getAsString());
+                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
+                break;
+
+            case "sacar":
+                commands.sacar(event.getUser(), event.getOption("valor").getAsString());
+                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
+                break;
+
+            case "transferir":
+                commands.transferir(event.getUser(), event.getOption("valor").getAsString(), event.getOption("pessoa").getAsUser());
+                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
+                break;
+
         }
 
     }
@@ -77,7 +98,7 @@ public class Events extends ListenerAdapter {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
 
-        if(args[0].startsWith(BotEnumeration.PREFIX.getValue())){
+        if(args[0].startsWith(BotEnumeration.PREFIX.getValue())) {
 
             try {
 
@@ -105,7 +126,7 @@ public class Events extends ListenerAdapter {
                     commands.sacar(author, args[1]);
                     channel.sendMessage(commands.mostrarSaldo(author)).queue();
                 }
-            }
+
 
                 //Transferir
                 if (firstWord.equalsIgnoreCase("transferir")) {

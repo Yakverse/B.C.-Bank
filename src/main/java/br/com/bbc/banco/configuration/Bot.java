@@ -70,6 +70,26 @@ public class Bot {
                 new CommandData("saldo", "Mostra o seu saldo")
         );
 
+        commands.addCommands(
+                new CommandData("depositar", "Deposita dinheiro")
+                        .addOptions(new OptionData(STRING, "valor", "O quanto você vai depositar")
+                                .setRequired(true))
+        );
+
+        commands.addCommands(
+                new CommandData("sacar", "Retira dinheiro")
+                        .addOptions(new OptionData(STRING, "valor", "O quanto você vai retirar")
+                                .setRequired(true))
+        );
+
+        commands.addCommands(
+                new CommandData("transferir", "Retira dinheiro")
+                        .addOptions(
+                            new OptionData(STRING, "valor", "O quanto você vai transferir").setRequired(true),
+                            new OptionData(USER, "pessoa", "Pessoa que recebe o dinheiro").setRequired(true)
+                        )
+        );
+
         commands.queue();
     }
 

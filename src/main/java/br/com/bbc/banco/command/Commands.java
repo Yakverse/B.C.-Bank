@@ -95,7 +95,7 @@ public class Commands {
     }
 
 
-    public void erro(MessageReceivedEvent event){
+    public void erro(net.dv8tion.jda.api.entities.User author, MessageChannel channel){
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Valor Inválido");
