@@ -7,12 +7,12 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class Embeds {
 
-    public static EmbedBuilder saldoEmbed(MessageReceivedEvent event, User user, String mensagem, int cor){
+    public static EmbedBuilder saldoEmbed(net.dv8tion.jda.api.entities.User author, User user, String mensagem, int cor){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("💰 Saldo Atual 💰");
         embed.addField("BC$ " + user.getSaldo().toString(), mensagem, false);
         embed.setColor(cor);
-        embed.setFooter("Solicitado por " + event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
 
         return embed;
     }

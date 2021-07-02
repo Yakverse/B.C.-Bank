@@ -58,6 +58,10 @@ public class Bot {
                 new CommandData("ping", "Ping-Pong com o bot")
         );
 
+        commands.addCommands(
+                new CommandData("saldo", "Mostra o seu saldo")
+        );
+
         commands.queue();
     }
 

@@ -4,6 +4,8 @@ import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.model.User;
 import br.com.bbc.banco.service.UserService;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.hibernate.type.BigDecimalType;
@@ -25,17 +27,8 @@ public class Commands {
         return this.userService.create(user);
     }
 
-    public User checkUser(MessageReceivedEvent event){
-        Long id = event.getAuthor().getIdLong();
-        User user = this.userService.findById(id);
-        if (user == null){
-            user = this.criarUsuario(id);
-        }
-        return user;
-    }
-
-    public User checkUserDiscord(net.dv8tion.jda.api.entities.User usuario){
-        Long id = usuario.getIdLong();
+    public User checkUser(net.dv8tion.jda.api.entities.User author){
+        Long id = author.getIdLong();
         User user = this.userService.findById(id);
         if (user == null){
             user = this.criarUsuario(id);
@@ -44,39 +37,58 @@ public class Commands {
     }
 
 
-    public void mostrarSaldo(MessageReceivedEvent event){
-        User user = checkUser(event);
-
-        EmbedBuilder embed = Embeds.saldoEmbed(event, user, "Você é pobre", 0x00000);
-        event.getChannel().sendMessage(embed.build()).queue();
+    public MessageEmbed mostrarSaldo(net.dv8tion.jda.api.entities.User author){
+        User user = checkUser(author);
+        return Embeds.saldoEmbed(author, user, "Você é pobre", 0x00000).build();
     }
 
-    public void depositar(MessageReceivedEvent event, BigDecimal valor){
-        User user = checkUser(event);
+    public BigDecimal convertStringToBigDecimal(String string){
+        string = string.replace(',','.');
+        return new BigDecimal(string);
+    }
+
+    public void checkValor(BigDecimal valor) throws Exception {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) throw new Exception();
+    }
+
+    public void depositar(net.dv8tion.jda.api.entities.User author, MessageChannel channel, String valorString) throws Exception {
+        BigDecimal valor = this.convertStringToBigDecimal(valorString);
+        this.checkValor(valor);
+
+        User user = checkUser(author);
 
         BigDecimal saldoAtual = user.getSaldo();
         BigDecimal novoSaldo = saldoAtual.add(valor);
         user.setSaldo(novoSaldo);
-        this.userService.update(user, event.getAuthor().getIdLong());
+        this.userService.update(user, author.getIdLong());
 
-        this.mostrarSaldo(event);
+        MessageEmbed embed = this.mostrarSaldo(author);
+        channel.sendMessage(embed).queue();
     }
 
 
-    public void sacar(MessageReceivedEvent event, BigDecimal valor){
-        User user = checkUser(event);
+    public void sacar(net.dv8tion.jda.api.entities.User author, MessageChannel channel, String valorString) throws Exception {
+        BigDecimal valor = this.convertStringToBigDecimal(valorString);
+        this.checkValor(valor);
+        User user = checkUser(author);
 
         BigDecimal saldoAtual = user.getSaldo();
         BigDecimal novoSaldo = saldoAtual.subtract(valor);
         user.setSaldo(novoSaldo);
-        this.userService.update(user, event.getAuthor().getIdLong());
+        this.userService.update(user, author.getIdLong());
 
-        this.mostrarSaldo(event);
+        MessageEmbed embed = this.mostrarSaldo(author);
+        channel.sendMessage(embed).queue();
     }
 
-    public void transferir(MessageReceivedEvent event, BigDecimal valor, net.dv8tion.jda.api.entities.User transferido){
-        User user = checkUser(event);
-        User posTransferido = checkUserDiscord(transferido);
+    public void transferir(net.dv8tion.jda.api.entities.User author, String valorString, net.dv8tion.jda.api.entities.User transferido) throws Exception {
+        if(author.getIdLong() == transferido.getIdLong()) throw new Exception();
+
+        BigDecimal valor = this.convertStringToBigDecimal(valorString);
+        this.checkValor(valor);
+
+        User user = checkUser(author);
+        User posTransferido = checkUser(transferido);
 
         BigDecimal saldoAtual = user.getSaldo();
         BigDecimal novoSaldo = saldoAtual.subtract(valor);
