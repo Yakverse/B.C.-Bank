@@ -19,7 +19,7 @@ public class UserService {
         return this.userRepository.findById(id).orElse(null);
     }
 
-    public User update(User user, Long id){
+    public User update(User user){
         return this.userRepository.save(user);
     }
 }

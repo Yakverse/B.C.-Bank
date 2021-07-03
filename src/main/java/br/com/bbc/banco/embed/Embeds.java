@@ -1,10 +1,15 @@
 package br.com.bbc.banco.embed;
 
+import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.enumeration.BotEnumeration;
+import br.com.bbc.banco.model.Transaction;
 import br.com.bbc.banco.model.User;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class Embeds {
 
@@ -18,11 +23,31 @@ public class Embeds {
         return embed;
     }
 
-    public static EmbedBuilder extratoEmbed(net.dv8tion.jda.api.entities.User author, User user, String mensagem, int cor){
+    public static EmbedBuilder extratoEmbed(net.dv8tion.jda.api.entities.User author, User user, List<Transaction> transactions, int cor){
+
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("💰 Saldo Atual 💰");
-        embed.addField("EM CONSTRUÇÃO", mensagem, false);
+        embed.setTitle("💰 Extrato: 💰");
         embed.setColor(cor);
+        String mensagem;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss");
+
+
+        for (Transaction transaction : transactions) {
+            String dateFormated = transaction.getDate().format(formatter);
+
+            if( user.getId() == transaction.getUser().getId()){
+                mensagem = String.format("%s enviou %s %f em %s", Bot.jda.getUserById(transaction.getOriginUser().getId()).getName(),
+                        BotEnumeration.CURRENCY.getValue(), transaction.getValor(), dateFormated );
+            }
+            else{
+                mensagem = String.format("Você enviou %s %f para %s em %s", BotEnumeration.CURRENCY.getValue(),
+                        transaction.getValor(), Bot.jda.getUserById(transaction.getOriginUser().getId()).getName(), dateFormated);
+            }
+
+            embed.addField("", mensagem, false);
+        }
+
         embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
 
         return embed;
