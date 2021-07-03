@@ -16,4 +16,24 @@ public class Embeds {
 
         return embed;
     }
+
+    public static EmbedBuilder dailyEmbed(net.dv8tion.jda.api.entities.User author, User user, int valor, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("💰 Seu ganho do dia 💰");
+        embed.addField("+ BC$" + valor, "Saldo: BC$ " + user.getSaldo().toString(), false);
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder dailyEmbedError(net.dv8tion.jda.api.entities.User author, long horas, long minutos, long segundos, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Indisponível!");
+        embed.addField("Você ainda precisa esperar:", horas + "h " + minutos + "m " + segundos + "s", true);
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
 }

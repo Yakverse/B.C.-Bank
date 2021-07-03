@@ -21,10 +21,7 @@ import java.math.BigDecimal;
 import java.nio.channels.Channel;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class Events extends ListenerAdapter {
@@ -83,6 +80,9 @@ public class Events extends ListenerAdapter {
                 event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
                 break;
 
+            case "daily":
+                commands.daily(event.getUser());
+                break;
         }
 
     }
@@ -137,6 +137,11 @@ public class Events extends ListenerAdapter {
 
                     commands.transferir(author, args[1], users.get(0));
                     channel.sendMessage(commands.mostrarSaldo(author)).queue();
+                }
+
+                //Daily
+                if (firstWord.equalsIgnoreCase("daily")){
+                    channel.sendMessage(commands.daily(event.getAuthor())).queue();
                 }
 
             } catch (Exception e) {

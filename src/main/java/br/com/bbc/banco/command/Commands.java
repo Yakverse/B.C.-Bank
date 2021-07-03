@@ -7,10 +7,15 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Random;
 
 @Component
 public class Commands {
@@ -92,6 +97,27 @@ public class Commands {
         this.userService.update(posTransferido, posTransferido.getId());
 
 
+    }
+
+    public MessageEmbed daily(net.dv8tion.jda.api.entities.User author) throws Exception {
+        User user = checkUser(author);
+        if (user.getUltimoDaily().until(LocalDateTime.now(), ChronoUnit.DAYS) >= 1) {
+            Random rand = new Random();
+            Integer valor = Math.round(100 * (rand.nextFloat() + 1));
+
+            user.setSaldo(user.getSaldo().add(new BigDecimal(valor)));
+            user.setUltimoDaily(LocalDateTime.now());
+            this.userService.update(user, user.getId());
+
+            return Embeds.dailyEmbed(author, user, valor, 0x00000).build();
+        }
+        long dif = (user.getUltimoDaily().plusDays(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - System.currentTimeMillis()) / 1000;
+
+        long segundos = dif % 60;
+        long minutos = (dif / 60) % 60;
+        long horas = (dif / 3600);
+
+        return Embeds.dailyEmbedError(author, horas, minutos, segundos, 0x00000).build();
     }
 
 
