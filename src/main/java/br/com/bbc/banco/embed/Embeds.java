@@ -2,6 +2,8 @@ package br.com.bbc.banco.embed;
 
 import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.enumeration.BotEnumeration;
+import br.com.bbc.banco.model.Bet;
+import br.com.bbc.banco.model.Option;
 import br.com.bbc.banco.model.Transaction;
 import br.com.bbc.banco.model.User;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -37,6 +39,39 @@ public class Embeds {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Indisponível!");
         embed.addField("Você ainda precisa esperar:", horas + "h " + minutos + "m " + segundos + "s", true);
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder criarApostaEmbed(net.dv8tion.jda.api.entities.User author, Bet bet, List<Option> options, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("Aposta %s criada!", bet.getNome()));
+        for (Option option : options) {
+            embed.addField(String.format("[%d] %s", option.getNumber() + 1, option.getText()), "", false);
+        }
+        embed.setColor(cor);
+        embed.setFooter(String.format("ID da aposta: %d", bet.getId()));
+
+        return embed;
+    }
+
+    public static EmbedBuilder criarApostaEmbedError(net.dv8tion.jda.api.entities.User author, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Informe pelo menos 2 opções!");
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostasEmbed(net.dv8tion.jda.api.entities.User author, int cor, List<Bet> bets){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Apostas ativas no momento!");
+        for (Bet bet : bets) {
+            embed.addField(String.format("[%d] %s", bet.getId(), bet.getNome()), "", false);
+        }
         embed.setColor(cor);
         embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
 

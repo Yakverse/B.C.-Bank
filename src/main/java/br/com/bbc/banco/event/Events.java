@@ -2,6 +2,7 @@ package br.com.bbc.banco.event;
 
 import br.com.bbc.banco.command.Commands;
 import br.com.bbc.banco.configuration.Bot;
+import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 import net.dv8tion.jda.internal.interactions.InteractionHookImpl;
 import org.jetbrains.annotations.NotNull;
@@ -88,13 +90,20 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "daily":
-                commands.daily(event.getUser());
+                event.replyEmbeds(commands.daily(event.getUser())).setEphemeral(true).queue();
                 break;
 
             case "extrato":
                 event.replyEmbeds(commands.mostrarExtrato(event.getUser())).setEphemeral(true).queue();
                 break;
 
+            case "criaraposta":
+                event.replyEmbeds(commands.criarAposta(event.getUser(), event.getOption("nome").getAsString(), event.getOption("opcao1").getAsString(), event.getOption("opcao2").getAsString())).queue();
+                break;
+
+            case "apostas":
+                event.replyEmbeds(commands.apostas(event.getUser())).setEphemeral(true).queue();
+                break;
         }
 
     }
@@ -156,7 +165,29 @@ public class Events extends ListenerAdapter {
                     channel.sendMessage(commands.daily(event.getAuthor())).queue();
                 }
 
+                //Criar Aposta
+                if (firstWord.equalsIgnoreCase("criaraposta")){
+                    if (args.length < 4) channel.sendMessage(Embeds.criarApostaEmbedError(author, 0x00000).build()).queue();
+                    else {
+                        String nome = args[1];
+
+                        List<String> list = Arrays.asList(args);
+                        list = list.subList(2, args.length);
+
+                        String[] newarr = new String[list.size()];
+                        list.toArray(newarr);
+
+                        channel.sendMessage(commands.criarAposta(author, nome, newarr)).queue();
+                    }
+                }
+
+                //Apostas
+                if (firstWord.equalsIgnoreCase("apostas")){
+                    channel.sendMessage(commands.apostas(author)).queue();
+                }
+
             } catch (Exception e) {
+                System.out.println(e);
                 commands.erro(author, event.getChannel());
             }
         }

@@ -90,10 +90,22 @@ public class Bot {
                         )
         );
 
+        commands.addCommands(new CommandData("daily", "Recompensa diária"));
+
         commands.addCommands(
                 new CommandData("extrato", "Mostra seu extrato")
         );
 
+        commands.addCommands(
+                new CommandData("criaraposta", "Cria uma aposta")
+                    .addOptions(
+                            new OptionData(STRING, "nome", "Nome da Aposta").setRequired(true),
+                            new OptionData(STRING, "opcao1", "Opção 1 da aposta").setRequired(true),
+                            new OptionData(STRING, "opcao2", "Opção 2 da aposta").setRequired(true)
+                    )
+        );
+
+        commands.addCommands(new CommandData("apostas", "Mostra todas as apostas disponíveis."));
 
         commands.queue();
     }

@@ -1,8 +1,12 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.model.Bet;
+import br.com.bbc.banco.model.Option;
 import br.com.bbc.banco.model.Transaction;
 import br.com.bbc.banco.model.User;
+import br.com.bbc.banco.service.BetService;
+import br.com.bbc.banco.service.OptionService;
 import br.com.bbc.banco.service.TransactionService;
 import br.com.bbc.banco.service.UserService;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -17,6 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +34,12 @@ public class Commands {
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private BetService betService;
+
+    @Autowired
+    private OptionService optionService;
 
     public User criarUsuario(Long id){
         User user = new User();
@@ -155,4 +166,31 @@ public class Commands {
         transaction.setUser(posTransferido);
         this.transactionService.update(transaction);
     }
+
+    public MessageEmbed criarAposta(net.dv8tion.jda.api.entities.User author, String name, String... options){
+        User user = checkUser(author);
+
+        Bet bet = new Bet();
+        bet.setNome(name);
+        bet.setEndDate(LocalDateTime.now().plusDays(1));
+        bet.setCreatedBy(user);
+        bet = this.betService.create(bet);
+
+        List<Option> listOption = new ArrayList<>();
+
+        for (int i = 0; i < options.length; i++) {
+            Option optionObj = new Option();
+            optionObj.setText(options[i]);
+            optionObj.setNumber(i);
+            optionObj.setBet(bet);
+            listOption.add(this.optionService.create(optionObj));
+        }
+
+        return Embeds.criarApostaEmbed(author, bet, listOption, 0x00000).build();
+    }
+
+    public MessageEmbed apostas(net.dv8tion.jda.api.entities.User author){
+        return Embeds.apostasEmbed(author, 0x00000, this.betService.findAll()).build();
+    }
+
 }
