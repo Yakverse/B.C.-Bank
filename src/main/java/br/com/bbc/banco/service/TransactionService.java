@@ -24,7 +24,10 @@ public class TransactionService {
     }
 
     public List<Transaction> findByUserId(Long id){
-        return this.transactionRepository.findByUserId(id);
+        List<Transaction> sent = this.transactionRepository.findByOriginUserId(id);
+        List<Transaction> received = this.transactionRepository.findByUserId(id);
+        sent.addAll(received);
+        return sent;
     }
 
     public Transaction update(Transaction transaction){

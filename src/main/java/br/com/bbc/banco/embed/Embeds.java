@@ -26,7 +26,7 @@ public class Embeds {
     public static EmbedBuilder extratoEmbed(net.dv8tion.jda.api.entities.User author, User user, List<Transaction> transactions, int cor){
 
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("💰 Extrato: 💰");
+        embed.setTitle("💰 Extrato 💰");
         embed.setColor(cor);
         String mensagem;
 
@@ -36,13 +36,17 @@ public class Embeds {
         for (Transaction transaction : transactions) {
             String dateFormated = transaction.getDate().format(formatter);
 
-            if( user.getId() == transaction.getUser().getId()){
-                mensagem = String.format("%s enviou %s %f em %s", Bot.jda.getUserById(transaction.getOriginUser().getId()).getName(),
-                        BotEnumeration.CURRENCY.getValue(), transaction.getValor(), dateFormated );
+            if( user.getId().equals(transaction.getUser().getId())){
+                mensagem = String.format("Você recebeu %s %.2f de %s em %s",
+                        BotEnumeration.CURRENCY.getValue(), transaction.getValor(),
+                        Bot.jda.getUserById(transaction.getOriginUser().getId()).getName(), dateFormated
+                );
             }
             else{
-                mensagem = String.format("Você enviou %s %f para %s em %s", BotEnumeration.CURRENCY.getValue(),
-                        transaction.getValor(), Bot.jda.getUserById(transaction.getOriginUser().getId()).getName(), dateFormated);
+                mensagem = String.format("Você enviou %s %.2f para %s em %s",
+                        BotEnumeration.CURRENCY.getValue(), transaction.getValor(),
+                        Bot.jda.getUserById(transaction.getUser().getId()).getName(), dateFormated
+                );
             }
 
             embed.addField("", mensagem, false);

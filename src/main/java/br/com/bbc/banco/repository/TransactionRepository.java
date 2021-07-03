@@ -11,4 +11,5 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     List<Transaction> findByUserId(Long id);
+    List<Transaction> findByOriginUserId(Long id);
 }
