@@ -90,6 +90,11 @@ public class Bot {
                         )
         );
 
+        commands.addCommands(
+                new CommandData("extrato", "Mostra seu extrato")
+        );
+
+
         commands.queue();
     }
 

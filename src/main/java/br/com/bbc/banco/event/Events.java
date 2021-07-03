@@ -1,6 +1,7 @@
 package br.com.bbc.banco.event;
 
 import br.com.bbc.banco.command.Commands;
+import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -66,12 +67,18 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "depositar":
-                commands.depositar(event.getUser(), event.getOption("valor").getAsString());
+//                commands.depositar(event.getUser(), event.getOption("valor").getAsString());
+
+                commands.transferir(Bot.jda.getSelfUser(),event.getOption("valor").getAsString(),event.getUser());
+
                 event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
                 break;
 
             case "sacar":
-                commands.sacar(event.getUser(), event.getOption("valor").getAsString());
+//                commands.sacar(event.getUser(), event.getOption("valor").getAsString());
+
+                commands.transferir(event.getUser(),event.getOption("valor").getAsString(),Bot.jda.getSelfUser());
+
                 event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
                 break;
 
@@ -83,6 +90,11 @@ public class Events extends ListenerAdapter {
             case "daily":
                 commands.daily(event.getUser());
                 break;
+
+            case "extrato":
+                event.replyEmbeds(commands.mostrarExtrato(event.getUser())).setEphemeral(true).queue();
+                break;
+
         }
 
     }
