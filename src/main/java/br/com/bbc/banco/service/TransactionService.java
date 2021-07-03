@@ -5,6 +5,9 @@ import br.com.bbc.banco.model.User;
 import br.com.bbc.banco.repository.TransactionRepository;
 import br.com.bbc.banco.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,10 +27,8 @@ public class TransactionService {
     }
 
     public List<Transaction> findByUserId(Long id){
-        List<Transaction> sent = this.transactionRepository.findByOriginUserId(id);
-        List<Transaction> received = this.transactionRepository.findByUserId(id);
-        sent.addAll(received);
-        return sent;
+        Pageable sortedFirstPageWithTenElementsByDate = PageRequest.of(0, 10, Sort.by("date").descending());
+        return this.transactionRepository.findByUserIdOrOriginUserId(id, id, sortedFirstPageWithTenElementsByDate);
     }
 
     public Transaction update(Transaction transaction){

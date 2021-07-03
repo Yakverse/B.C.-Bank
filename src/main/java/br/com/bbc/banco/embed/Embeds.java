@@ -7,10 +7,12 @@ import br.com.bbc.banco.model.Option;
 import br.com.bbc.banco.model.Transaction;
 import br.com.bbc.banco.model.User;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 public class Embeds {
@@ -83,29 +85,54 @@ public class Embeds {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("💰 Extrato 💰");
         embed.setColor(cor);
+        String beforeMessage;
         String mensagem;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy hh:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yy");
 
-
+        Collections.reverse(transactions);
         for (Transaction transaction : transactions) {
             String dateFormated = transaction.getDate().format(formatter);
 
             if( user.getId().equals(transaction.getUser().getId())){
-                mensagem = String.format("Você recebeu %s %.2f de %s em %s",
-                        BotEnumeration.CURRENCY.getValue(), transaction.getValor(),
-                        Bot.jda.getUserById(transaction.getOriginUser().getId()).getName(), dateFormated
+                net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getOriginUser().getId()).complete();
+
+                beforeMessage = String.format("%s [%s] - %s %.2f",
+                        Emoji.fromUnicode("\uD83D\uDFE2"),
+                        dateFormated.toUpperCase(),
+                        BotEnumeration.CURRENCY.getValue(),
+                        transaction.getValor()
+                );
+
+                mensagem = String.format("de %s", userRetrieved.getName()
                 );
             }
             else{
-                mensagem = String.format("Você enviou %s %.2f para %s em %s",
-                        BotEnumeration.CURRENCY.getValue(), transaction.getValor(),
-                        Bot.jda.getUserById(transaction.getUser().getId()).getName(), dateFormated
+                net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getUser().getId()).complete();
+
+                beforeMessage = String.format("%s [%s] - %s %.2f",
+                        Emoji.fromUnicode("\uD83D\uDD34"),
+                        dateFormated.toUpperCase(),
+                        BotEnumeration.CURRENCY.getValue(),
+                        transaction.getValor()
+                );
+
+                mensagem = String.format("para %s",
+                        userRetrieved.getName()
                 );
             }
 
-            embed.addField("", mensagem, false);
+            embed.addField(beforeMessage, mensagem, false);
         }
+
+
+
+//        embed.addBlankField(false);
+        embed.addField(
+                String.format("Saldo - %s %.2f", BotEnumeration.CURRENCY.getValue(), user.getSaldo()),
+                "",
+                false
+        );
 
         embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
 

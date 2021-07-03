@@ -189,6 +189,7 @@ public class Events extends ListenerAdapter {
             } catch (Exception e) {
                 System.out.println(e);
                 commands.erro(author, event.getChannel());
+                System.out.println(e);
             }
         }
     }
