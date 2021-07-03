@@ -97,7 +97,7 @@ public class Embeds {
             if( user.getId().equals(transaction.getUser().getId())){
                 net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getOriginUser().getId()).complete();
 
-                beforeMessage = String.format("%s [%s] - %s %.2f",
+                beforeMessage = String.format("%s [%s] +%s %.2f",
                         Emoji.fromUnicode("\uD83D\uDFE2"),
                         dateFormated.toUpperCase(),
                         BotEnumeration.CURRENCY.getValue(),
@@ -110,7 +110,7 @@ public class Embeds {
             else{
                 net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getUser().getId()).complete();
 
-                beforeMessage = String.format("%s [%s] - %s %.2f",
+                beforeMessage = String.format("%s [%s] -%s %.2f",
                         Emoji.fromUnicode("\uD83D\uDD34"),
                         dateFormated.toUpperCase(),
                         BotEnumeration.CURRENCY.getValue(),
