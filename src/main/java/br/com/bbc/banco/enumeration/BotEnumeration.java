@@ -3,7 +3,7 @@ package br.com.bbc.banco.enumeration;
 public enum BotEnumeration {
 
     PREFIX("$"),
-    TOKEN("Njc5MTUzNzU0MTc1NzAxMDMy.XktNOQ.iaFHfe8Xcr-Eo6e9v3tJJWSehb0"),
+    TOKEN(System.getenv("TOKEN")),
     CURRENCY("BC$");
 
     private String value;
