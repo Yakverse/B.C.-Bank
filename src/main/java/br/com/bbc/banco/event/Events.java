@@ -70,22 +70,6 @@ public class Events extends ListenerAdapter {
                 event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
                 break;
 
-            case "depositar":
-//                commands.depositar(event.getUser(), event.getOption("valor").getAsString());
-
-                commands.transferir(Bot.jda.getSelfUser(),event.getOption("valor").getAsString(),event.getUser());
-
-                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
-                break;
-
-            case "sacar":
-//                commands.sacar(event.getUser(), event.getOption("valor").getAsString());
-
-                commands.transferir(event.getUser(),event.getOption("valor").getAsString(),Bot.jda.getSelfUser());
-
-                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
-                break;
-
             case "transferir":
                 commands.transferir(event.getUser(), event.getOption("valor").getAsString(), event.getOption("pessoa").getAsUser());
                 event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
@@ -150,21 +134,6 @@ public class Events extends ListenerAdapter {
             if (firstWord.equalsIgnoreCase("saldo")) {
                 channel.sendMessage(commands.mostrarSaldo(author)).queue();
             }
-
-            // Depositar
-            if (firstWord.equalsIgnoreCase("depositar")) {
-                commands.depositar(author, args[1]);
-                channel.sendMessage(commands.mostrarSaldo(author)).queue();
-            }
-
-            //Sacar
-            if (firstWord.equalsIgnoreCase("sacar")) {
-                if (args.length > 2) throw new Exception();
-
-                commands.sacar(author, args[1]);
-                channel.sendMessage(commands.mostrarSaldo(author)).queue();
-            }
-
 
             //Transferir
             if (firstWord.equalsIgnoreCase("transferir")) {

@@ -3,11 +3,10 @@ package br.com.bbc.banco.command;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.model.*;
 import br.com.bbc.banco.service.*;
+import br.com.bbc.banco.util.GenericUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +16,6 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -29,8 +27,6 @@ public class Commands {
     @Autowired
     private TransactionService transactionService;
 
-<<<<<<< HEAD
-=======
     @Autowired
     private BetService betService;
 
@@ -40,10 +36,8 @@ public class Commands {
     @Autowired
     private JokenpoService jokenpoService;
 
->>>>>>> babd932676355969703f9fed99b91b6d46982db3
     public User criarUsuario(Long id){
-        User user = new User();
-        user.setId(id);
+        User user = new User(id);
         return this.userService.create(user);
     }
 
@@ -59,70 +53,43 @@ public class Commands {
 
     public MessageEmbed mostrarSaldo(net.dv8tion.jda.api.entities.User author){
         User user = checkUser(author);
-        return Embeds.saldoEmbed(author, user, "Você é pobre", 0x00000).build();
+        BigDecimal saldo = user.getSaldo();
+        String mensagem = "";
+        int cor = 0x00000;
+
+        if (saldo.compareTo(BigDecimal.ZERO) > 0){
+            mensagem = "Seu saldo está positivo!";
+            cor = 0x80b461;
+        } else if (saldo.compareTo(BigDecimal.ZERO) == 0){
+            mensagem = "Seu saldo está neutro";
+            cor = 0xd0a843;
+        } else{
+            mensagem = "Seu saldo está negativo!";
+            cor = 0x7f2927;
+        }
+
+        return Embeds.saldoEmbed(author, user, mensagem, cor).build();
     }
-
-    public BigDecimal convertStringToBigDecimal(String string){
-        string = string.replace(',','.');
-        return new BigDecimal(string);
-    }
-
-    public void checkValor(BigDecimal valor) throws Exception {
-        if (valor.compareTo(BigDecimal.ZERO) <= 0) throw new Exception();
-    }
-
-    public void depositar(net.dv8tion.jda.api.entities.User author, String valorString) throws Exception {
-        BigDecimal valor = this.convertStringToBigDecimal(valorString);
-        this.checkValor(valor);
-
-        User user = checkUser(author);
-
-        BigDecimal saldoAtual = user.getSaldo();
-        BigDecimal novoSaldo = saldoAtual.add(valor);
-        user.setSaldo(novoSaldo);
-        this.userService.update(user);
-    }
-
-
-    public void sacar(net.dv8tion.jda.api.entities.User author, String valorString) throws Exception {
-        BigDecimal valor = this.convertStringToBigDecimal(valorString);
-        this.checkValor(valor);
-        User user = checkUser(author);
-
-        BigDecimal saldoAtual = user.getSaldo();
-        BigDecimal novoSaldo = saldoAtual.subtract(valor);
-        user.setSaldo(novoSaldo);
-        this.userService.update(user);
-    }
-
 
     public void transferir(net.dv8tion.jda.api.entities.User author, String valorString, net.dv8tion.jda.api.entities.User transferido) throws Exception {
         if(author.getIdLong() == transferido.getIdLong()) throw new Exception();
 
-        BigDecimal valor = this.convertStringToBigDecimal(valorString);
-        this.checkValor(valor);
+        BigDecimal valor = GenericUtils.convertStringToBigDecimalReplacingComma(valorString);
 
         User user = checkUser(author);
-        User posTransferido = checkUser(transferido);
+        User para = checkUser(transferido);
 
-        criaTransacao(valor,user,posTransferido);
-
-        BigDecimal saldoAtual = user.getSaldo();
-        BigDecimal novoSaldo = saldoAtual.subtract(valor);
-        user.setSaldo(novoSaldo);
+        user.transferir(valor, para);
         this.userService.update(user);
-
-        saldoAtual = posTransferido.getSaldo();
-        novoSaldo = saldoAtual.add(valor);
-        posTransferido.setSaldo(novoSaldo);
-        this.userService.update(posTransferido);
+        this.userService.update(para);
+        criaTransacao(valor,user,para);
     }
 
     public MessageEmbed daily(net.dv8tion.jda.api.entities.User author) throws Exception {
         User user = checkUser(author);
         if (user.getUltimoDaily().until(LocalDateTime.now(), ChronoUnit.DAYS) >= 1) {
             Random rand = new Random();
-            Integer valor = Math.round(100 * (rand.nextFloat() + 1));
+            int valor = Math.round(100 * (rand.nextFloat() + 1));
 
             user.setSaldo(user.getSaldo().add(new BigDecimal(valor)));
             user.setUltimoDaily(LocalDateTime.now());
@@ -137,18 +104,6 @@ public class Commands {
         long horas = (dif / 3600);
 
         return Embeds.dailyEmbedError(author, horas, minutos, segundos, 0x00000).build();
-    }
-
-
-    public void erro(net.dv8tion.jda.api.entities.User author, MessageChannel channel){
-
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("Valor Inválido");
-        embed.addField("Coloca um valor válido imbecil","Você é burro",false);
-        embed.setColor(0x00000);
-        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
-
-        channel.sendMessage(embed.build()).queue();
     }
 
     public MessageEmbed mostrarExtrato(net.dv8tion.jda.api.entities.User author){
