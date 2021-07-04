@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.hooks.IEventManager;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.components.Button;
 import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 import net.dv8tion.jda.internal.interactions.InteractionHookImpl;
 import org.jetbrains.annotations.NotNull;
@@ -106,6 +107,15 @@ public class Events extends ListenerAdapter {
 
             case "apostas":
                 event.replyEmbeds(commands.apostas(event.getUser())).setEphemeral(true).queue();
+                break;
+
+            case "jokenpo":
+                event.replyEmbeds(commands.jokenpo(event.getUser(),event.getOption("pessoa").getAsUser(), event.getOption("valor").getAsString()))
+                        .addActionRow(
+                            Button.primary("aceitarJokenpo", Emoji.fromUnicode("U+2714")),
+                            Button.secondary("recusarJokenpo", Emoji.fromUnicode("U+274C"))
+                            )
+                        .queue();
                 break;
         }
 

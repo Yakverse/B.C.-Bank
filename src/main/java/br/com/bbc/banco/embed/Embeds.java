@@ -138,4 +138,31 @@ public class Embeds {
 
         return embed;
     }
+
+
+    public static EmbedBuilder criaJokenpoEmbed(net.dv8tion.jda.api.entities.User author,net.dv8tion.jda.api.entities.User other , Long value){
+        EmbedBuilder embed = new EmbedBuilder();
+
+        String title = String.format("%s Jokenpo %s",
+            Emoji.fromUnicode("U+270A"),
+            Emoji.fromUnicode("U+270B")
+        );
+        embed.setTitle(title);
+
+        String message = String.format("%s te desafiou!",author.getName());
+
+        String underMessage = String.format("Valor: %s %d",
+                BotEnumeration.CURRENCY.getValue(),
+                value
+        );
+
+        embed.addField(message,underMessage,false);
+
+        String footer = String.format("Enviado para %s", other.getName());
+
+        embed.setFooter(footer, other.getAvatarUrl());
+
+
+        return embed;
+    }
 }
