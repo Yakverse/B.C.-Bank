@@ -8,6 +8,7 @@ import br.com.bbc.banco.enumeration.BotEnumeration;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -99,13 +100,11 @@ public class Events extends ListenerAdapter {
                 event.replyEmbeds(commands.jokenpo(event.getUser(),event.getOption("pessoa").getAsUser(), event.getOption("valor").getAsString()))
                         .addActionRow(
                             Button.primary("aceitarJokenpo", Emoji.fromUnicode("U+2714")),
-                            Button.secondary("recusarJokenpo", Emoji.fromUnicode("U+274C"))
-                            )
-                        .queue();
+                            Button.danger("recusarJokenpo", Emoji.fromUnicode("U+2716"))
+                        ).queue();
                 break;
         }
-
-    }
+    };
 
     @SneakyThrows
     @Override
@@ -177,6 +176,26 @@ public class Events extends ListenerAdapter {
                 channel.sendMessage(bets.apostar(author, Long.parseLong(args[1]), Long.parseLong(args[2]), args[3])).queue();
             }
 
+        }
+    }
+
+    @SneakyThrows
+    @Override
+    public void onButtonClick(@NotNull ButtonClickEvent event){
+
+
+        switch (event.getButton().getId()){
+            case "aceitarJokenpo":
+                event.editMessageEmbeds(commands.respostaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1],true))
+                    .setActionRow(
+                        Button.secondary("pedraJokenpo",Emoji.fromUnicode("U+270A")),
+                        Button.secondary("papelJokenpo",Emoji.fromUnicode("U+270B")),
+                        Button.secondary("tesouraJokenpo",Emoji.fromUnicode("U+270C"))
+                    ).queue();
+                break;
+            case "recusarJokenpo":
+                commands.respostaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1],false);
+                break;
         }
     }
 }

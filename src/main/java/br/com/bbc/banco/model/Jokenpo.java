@@ -21,5 +21,4 @@ public class Jokenpo {
     private long player2Id;
     private long value;
     private boolean hasStarted = false;
-    private long confirmationMessageId;
 }

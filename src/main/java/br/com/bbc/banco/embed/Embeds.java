@@ -2,12 +2,10 @@ package br.com.bbc.banco.embed;
 
 import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.enumeration.BotEnumeration;
-import br.com.bbc.banco.model.Bet;
-import br.com.bbc.banco.model.Option;
-import br.com.bbc.banco.model.Transaction;
-import br.com.bbc.banco.model.User;
+import br.com.bbc.banco.model.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emoji;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
@@ -172,7 +170,7 @@ public class Embeds {
         return embed;
     }
 
-    public static EmbedBuilder criaJokenpoEmbed(net.dv8tion.jda.api.entities.User author,net.dv8tion.jda.api.entities.User other , Long value){
+    public static EmbedBuilder criarJokenpoEmbed(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other , long value, long id){
         EmbedBuilder embed = new EmbedBuilder();
 
         String title = String.format("%s Jokenpo %s",
@@ -184,16 +182,29 @@ public class Embeds {
         String message = String.format("%s te desafiou!",author.getName());
 
         String underMessage = String.format("Valor: %s %d",
-                BotEnumeration.CURRENCY.getValue(),
-                value
+            BotEnumeration.CURRENCY.getValue(),
+            value
         );
 
         embed.addField(message,underMessage,false);
 
-        String footer = String.format("Enviado para %s", other.getName());
+        String footer = String.format("Enviado para %s\nGameId#%d",
+            other.getName(),
+            id
+        );
 
         embed.setFooter(footer, other.getAvatarUrl());
 
         return embed;
     }
+
+    public static MessageEmbed criarJokenpoGameEmbed(){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Escolha uma das opçoes abaixo");
+        return embed.build();
+    }
+
+
+
+
 }

@@ -122,10 +122,23 @@ public class Commands {
 
         this.jokenpoService.create(jokenpo);
 
-        return Embeds.criaJokenpoEmbed(author,other,value).build();
+        return Embeds.criarJokenpoEmbed(author,other,value, jokenpo.getId()).build();
+    }
 
-        //Player2 aceita ou recusa ou ignora o jokenpo
-        //Player1 e Player2 Dão suas jogadas ou
+
+    public MessageEmbed respostaJokenpo(net.dv8tion.jda.api.entities.User author, String jokenpoId, boolean acepted) throws Exception {
+        Jokenpo jokenpo = this.jokenpoService.findById(Long.parseLong(jokenpoId));
+
+        if(jokenpo.getPlayer2Id() != author.getIdLong()) throw new Exception("Usuario não é o player correto");
+
+
+        if(!acepted){
+            //deleta messagem
+            return null;
+        }
+
+        return Embeds.criarJokenpoGameEmbed();
+
     }
 
 }
