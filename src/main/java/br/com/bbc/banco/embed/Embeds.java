@@ -90,42 +90,49 @@ public class Embeds {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yy");
 
-        Collections.reverse(transactions);
-        for (Transaction transaction : transactions) {
-            String dateFormated = transaction.getDate().format(formatter);
+        if(transactions != null){
 
-            if( user.getId().equals(transaction.getUser().getId())){
-                net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getOriginUser().getId()).complete();
+            Collections.reverse(transactions);
+            for (Transaction transaction : transactions) {
+                String dateFormated = transaction.getDate().format(formatter);
 
-                beforeMessage = String.format("%s [%s] %s %.2f",
-                        Emoji.fromMarkdown("<:money_increased:861040590409302026>"),
-                        dateFormated.toUpperCase(),
-                        BotEnumeration.CURRENCY.getValue(),
-                        transaction.getValor()
-                );
+                if( user.getId().equals(transaction.getUser().getId())){
+                    net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getOriginUser().getId()).complete();
 
-                mensagem = String.format("de %s", userRetrieved.getName()
-                );
+                    beforeMessage = String.format("%s [%s] %s %.2f",
+                            Emoji.fromMarkdown("<:money_increased:861040590409302026>"),
+                            dateFormated.toUpperCase(),
+                            BotEnumeration.CURRENCY.getValue(),
+                            transaction.getValor()
+                    );
+
+                    mensagem = String.format("de %s", userRetrieved.getName()
+                    );
+                }
+                else{
+                    net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getUser().getId()).complete();
+
+                    beforeMessage = String.format("%s [%s] %s %.2f",
+                            Emoji.fromMarkdown("<:money_decreased:861038910112923668>"),
+                            dateFormated.toUpperCase(),
+                            BotEnumeration.CURRENCY.getValue(),
+                            transaction.getValor()
+                    );
+
+                    mensagem = String.format("para %s",
+                            userRetrieved.getName()
+                    );
+                }
+
+                embed.addField(beforeMessage, mensagem, false);
             }
-            else{
-                net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getUser().getId()).complete();
 
-                beforeMessage = String.format("%s [%s] %s %.2f",
-                        Emoji.fromMarkdown("<:money_decreased:861038910112923668>"),
-                        dateFormated.toUpperCase(),
-                        BotEnumeration.CURRENCY.getValue(),
-                        transaction.getValor()
-                );
-
-                mensagem = String.format("para %s",
-                        userRetrieved.getName()
-                );
-            }
-
-            embed.addField(beforeMessage, mensagem, false);
+        } else {
+            embed.addField("Nenhuma transação disponível",
+                    "",
+                    false
+            );
         }
-
-
 
 //        embed.addBlankField(false);
         embed.addField(

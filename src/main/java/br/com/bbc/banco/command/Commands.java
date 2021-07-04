@@ -1,6 +1,7 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.enumeration.TransactionType;
 import br.com.bbc.banco.model.*;
 import br.com.bbc.banco.service.*;
 import br.com.bbc.banco.util.GenericUtils;
@@ -69,7 +70,7 @@ public class Commands {
         user.transferir(valor, para);
         this.userService.update(user);
         this.userService.update(para);
-        this.transactionService.update(new Transaction(valor,user,para));
+        this.transactionService.update(new Transaction(valor,user,para, TransactionType.TRANFERENCIA));
     }
 
     public MessageEmbed daily(net.dv8tion.jda.api.entities.User author) throws Exception {
