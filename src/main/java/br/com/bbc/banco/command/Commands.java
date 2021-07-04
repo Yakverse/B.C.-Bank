@@ -4,6 +4,7 @@ import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.model.*;
 import br.com.bbc.banco.service.*;
 import br.com.bbc.banco.util.GenericUtils;
+import br.com.bbc.banco.util.UserUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -32,20 +33,13 @@ public class Commands {
 
     @Autowired
     private OptionService optionService;
-
-
-    public User checkUser(net.dv8tion.jda.api.entities.User author){
-        Long id = author.getIdLong();
-        User user = this.userService.findById(id);
-        if (user == null){
-            user = this.userService.create(new User(id));
-        }
-        return user;
-    }
+    
+    @Autowired
+    private UserUtils userUtils;
 
 
     public MessageEmbed mostrarSaldo(net.dv8tion.jda.api.entities.User author){
-        User user = checkUser(author);
+        User user = userUtils.idToUser(author.getIdLong());
         BigDecimal saldo = user.getSaldo();
         String mensagem = "";
         int cor = 0x00000;
@@ -69,8 +63,8 @@ public class Commands {
 
         BigDecimal valor = GenericUtils.convertStringToBigDecimalReplacingComma(valorString);
 
-        User user = checkUser(author);
-        User para = checkUser(transferido);
+        User user = userUtils.idToUser(author.getIdLong());
+        User para = userUtils.idToUser(transferido.getIdLong());
 
         user.transferir(valor, para);
         this.userService.update(user);
@@ -79,7 +73,7 @@ public class Commands {
     }
 
     public MessageEmbed daily(net.dv8tion.jda.api.entities.User author) throws Exception {
-        User user = checkUser(author);
+        User user = userUtils.idToUser(author.getIdLong());
         if (user.getUltimoDaily().until(LocalDateTime.now(), ChronoUnit.DAYS) >= 1) {
             Random rand = new Random();
             int valor = Math.round(100 * (rand.nextFloat() + 1));
@@ -100,7 +94,7 @@ public class Commands {
     }
 
     public MessageEmbed mostrarExtrato(net.dv8tion.jda.api.entities.User author){
-        User user = checkUser(author);
+        User user = userUtils.idToUser(author.getIdLong());
 
         List<Transaction> transactions = this.transactionService.findByUserId(user.getId());
 

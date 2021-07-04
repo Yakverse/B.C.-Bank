@@ -14,10 +14,9 @@ import java.util.Date;
 public class Transaction {
     @Id @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private long id;
-
     private LocalDateTime date = LocalDateTime.now();
-
     private BigDecimal valor;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")

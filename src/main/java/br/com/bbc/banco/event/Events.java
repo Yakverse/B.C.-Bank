@@ -6,6 +6,7 @@ import br.com.bbc.banco.command.Jokenpos;
 import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.BotEnumeration;
+import br.com.bbc.banco.util.UserUtils;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -33,6 +34,9 @@ public class Events extends ListenerAdapter {
 
     @Autowired
     private Jokenpos jokenpos;
+
+    @Autowired
+    private UserUtils userUtils;
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -71,7 +75,7 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "criar":
-                commands.checkUser(event.getUser());
+                userUtils.idToUser(event.getUser().getIdLong());
                 event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
                 break;
 
@@ -129,7 +133,7 @@ public class Events extends ListenerAdapter {
 
             // Criar conta
             if (firstWord.equalsIgnoreCase("criar")) {
-                commands.checkUser(author);
+                userUtils.idToUser(author.getIdLong());
                 channel.sendMessage(commands.mostrarSaldo(author)).queue();
             }
 
