@@ -1,7 +1,9 @@
 package br.com.bbc.banco.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
