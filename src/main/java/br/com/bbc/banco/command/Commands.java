@@ -33,9 +33,6 @@ public class Commands {
     @Autowired
     private OptionService optionService;
 
-    @Autowired
-    private JokenpoService jokenpoService;
-
 
     public User checkUser(net.dv8tion.jda.api.entities.User author){
         Long id = author.getIdLong();
@@ -108,37 +105,6 @@ public class Commands {
         List<Transaction> transactions = this.transactionService.findByUserId(user.getId());
 
         return Embeds.extratoEmbed(author, user, transactions, 0x00000).build();
-    }
-
-    public MessageEmbed jokenpo(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other, String valueString){
-        User player1 = checkUser(author);
-        User player2 = checkUser(other);
-        long value = Long.parseLong(valueString);
-
-        Jokenpo jokenpo = new Jokenpo();
-        jokenpo.setPlayer1Id(player1.getId());
-        jokenpo.setPlayer2Id(player2.getId());
-        jokenpo.setValue(value);
-
-        this.jokenpoService.create(jokenpo);
-
-        return Embeds.criarJokenpoEmbed(author,other,value, jokenpo.getId()).build();
-    }
-
-
-    public MessageEmbed respostaJokenpo(net.dv8tion.jda.api.entities.User author, String jokenpoId, boolean acepted) throws Exception {
-        Jokenpo jokenpo = this.jokenpoService.findById(Long.parseLong(jokenpoId));
-
-        if(jokenpo.getPlayer2Id() != author.getIdLong()) throw new Exception("Usuario não é o player correto");
-
-
-        if(!acepted){
-            //deleta messagem
-            return null;
-        }
-
-        return Embeds.criarJokenpoGameEmbed();
-
     }
 
 }

@@ -18,4 +18,8 @@ public class JokenpoService {
     public Jokenpo findById(Long id) {
         return this.jokenpoRepository.findById(id).orElse(null);
     }
+
+    public Jokenpo update(Jokenpo jokenpo){
+        return this.jokenpoRepository.save(jokenpo);
+    }
 }

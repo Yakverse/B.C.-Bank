@@ -18,7 +18,8 @@ public class Jokenpo {
 
     private LocalDateTime startDate = LocalDateTime.now();
     private long player1Id;
+    private String player1Pick;
     private long player2Id;
+    private String player2Pick;
     private long value;
-    private boolean hasStarted = false;
 }

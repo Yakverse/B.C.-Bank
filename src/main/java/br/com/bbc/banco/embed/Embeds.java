@@ -4,10 +4,12 @@ import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.model.*;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.springframework.context.support.EmbeddedValueResolutionSupport;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -198,12 +200,49 @@ public class Embeds {
         return embed;
     }
 
-    public static MessageEmbed criarJokenpoGameEmbed(){
+    public static EmbedBuilder criarJokenpoGameEmbed(long gameId){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Escolha uma das opçoes abaixo");
-        return embed.build();
+        String footer = String.format("GameId#%s", gameId);
+        embed.setFooter(footer);
+        return embed;
     }
 
+    public static EmbedBuilder jokenpoEmpate(){
+        EmbedBuilder embed = new EmbedBuilder();
+
+        String title = String.format("%s Jokenpo %s",
+                Emoji.fromUnicode("U+270A"),
+                Emoji.fromUnicode("U+270B")
+        );
+        embed.setTitle(title);
+        embed.addField("Empatou","",true);
+        return embed;
+    }
+
+    public static EmbedBuilder jokenpoGanhador(long winnerId , long loserId){
+        net.dv8tion.jda.api.entities.User winner = Bot.jda.retrieveUserById(winnerId).complete();
+        net.dv8tion.jda.api.entities.User loser = Bot.jda.retrieveUserById(loserId).complete();
+
+        EmbedBuilder embed = new EmbedBuilder();
+
+        String title = String.format("%s Jokenpo %s",
+                Emoji.fromUnicode("U+270A"),
+                Emoji.fromUnicode("U+270B")
+        );
+        embed.setTitle(title);
+
+        String message = String.format("%s Ganhou",
+                winner.getName()
+        );
+        String messageAfter = String.format("mais sorte da proxima vez %s",
+                loser.getName()
+        );
+
+        embed.addField(message,messageAfter,true);
+        return embed;
+
+    }
 
 
 
