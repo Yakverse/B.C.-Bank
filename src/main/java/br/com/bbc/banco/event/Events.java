@@ -6,26 +6,16 @@ import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import lombok.SneakyThrows;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.ExceptionEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.IEventManager;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.requests.restaction.WebhookAction;
-import net.dv8tion.jda.internal.interactions.InteractionHookImpl;
+import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.ButtonStyle;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nonnull;
-import java.math.BigDecimal;
-import java.nio.channels.Channel;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -62,7 +52,12 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "convite":
-                event.reply("https://discord.com/api/oauth2/authorize?client_id=826577440549502976&permissions=8&scope=applications.commands%20bot")
+                event.reply(String.format("%s", (Emoji.fromUnicode("\u200E"))))
+                        .addActionRow(
+                                Button.link(String.format("%s", BotEnumeration.INVITE_LINK.getValue()), "Convite")
+                                    .withEmoji(Emoji.fromMarkdown("<:charlao_normal_icon:861075166553047060>"))
+                                    .withStyle(ButtonStyle.LINK)
+                                )
                         .queue();
                 break;
 
@@ -115,6 +110,15 @@ public class Events extends ListenerAdapter {
             case "apostar":
                 event.replyEmbeds(bets.apostar(event.getUser(), event.getOption("id_aposta").getAsLong(), event.getOption("numero_opcao").getAsLong(), event.getOption("valor").getAsString())).setEphemeral(true).queue();
                 break;
+
+            case "jokenpo":
+                event.replyEmbeds(commands.jokenpo(event.getUser(),event.getOption("pessoa").getAsUser(), event.getOption("valor").getAsString()))
+                        .addActionRow(
+                            Button.primary("aceitarJokenpo", Emoji.fromUnicode("U+2714")),
+                            Button.secondary("recusarJokenpo", Emoji.fromUnicode("U+274C"))
+                            )
+                        .queue();
+                break;
         }
 
     }
@@ -134,7 +138,6 @@ public class Events extends ListenerAdapter {
         if(args[0].startsWith(BotEnumeration.PREFIX.getValue())) {
 
             if (firstWord.equalsIgnoreCase("teste")) {
-                throw new AbstractMethodError();
             }
 
             // Criar conta

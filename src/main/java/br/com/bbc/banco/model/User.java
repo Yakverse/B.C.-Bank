@@ -21,8 +21,8 @@ public class User {
     private Boolean isAdmin = false;
     private LocalDateTime ultimoDaily = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "user")
-    private List<Transaction> transaction;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Transaction> transactions;
 
     @OneToMany(mappedBy = "user")
     private List<UserBet> user_bet;

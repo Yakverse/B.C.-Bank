@@ -1,14 +1,8 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
-import br.com.bbc.banco.model.Bet;
-import br.com.bbc.banco.model.Option;
-import br.com.bbc.banco.model.Transaction;
-import br.com.bbc.banco.model.User;
-import br.com.bbc.banco.service.BetService;
-import br.com.bbc.banco.service.OptionService;
-import br.com.bbc.banco.service.TransactionService;
-import br.com.bbc.banco.service.UserService;
+import br.com.bbc.banco.model.*;
+import br.com.bbc.banco.service.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -35,6 +29,18 @@ public class Commands {
     @Autowired
     private TransactionService transactionService;
 
+<<<<<<< HEAD
+=======
+    @Autowired
+    private BetService betService;
+
+    @Autowired
+    private OptionService optionService;
+
+    @Autowired
+    private JokenpoService jokenpoService;
+
+>>>>>>> babd932676355969703f9fed99b91b6d46982db3
     public User criarUsuario(Long id){
         User user = new User();
         user.setId(id);
@@ -161,4 +167,47 @@ public class Commands {
         this.transactionService.update(transaction);
     }
 
+    public MessageEmbed criarAposta(net.dv8tion.jda.api.entities.User author, String name, String... options){
+        User user = checkUser(author);
+
+        Bet bet = new Bet();
+        bet.setNome(name);
+        bet.setEndDate(LocalDateTime.now().plusDays(1));
+        bet.setCreatedBy(user);
+        bet = this.betService.create(bet);
+
+        List<Option> listOption = new ArrayList<>();
+
+        for (int i = 0; i < options.length; i++) {
+            Option optionObj = new Option();
+            optionObj.setText(options[i]);
+            optionObj.setNumber(i);
+            optionObj.setBet(bet);
+            listOption.add(this.optionService.create(optionObj));
+        }
+
+        return Embeds.criarApostaEmbed(author, bet, listOption, 0x00000).build();
+    }
+
+    public MessageEmbed apostas(net.dv8tion.jda.api.entities.User author){
+        return Embeds.apostasEmbed(author, 0x00000, this.betService.findAll()).build();
+    }
+
+    public MessageEmbed jokenpo(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other, String valueString){
+        User player1 = checkUser(author);
+        User player2 = checkUser(other);
+        long value = Long.parseLong(valueString);
+
+        Jokenpo jokenpo = new Jokenpo();
+        jokenpo.setPlayer1Id(player1.getId());
+        jokenpo.setPlayer2Id(player2.getId());
+        jokenpo.setValue(value);
+
+        this.jokenpoService.create(jokenpo);
+
+        return Embeds.criaJokenpoEmbed(author,other,value).build();
+
+        //Player2 aceita ou recusa ou ignora o jokenpo
+        //Player1 e Player2 Dão suas jogadas ou
+    }
 }
