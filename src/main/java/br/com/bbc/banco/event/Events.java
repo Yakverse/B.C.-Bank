@@ -66,7 +66,7 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "criar":
-                commands.criarUsuario(event.getUser().getIdLong());
+                commands.checkUser(event.getUser());
                 event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
                 break;
 
@@ -126,7 +126,7 @@ public class Events extends ListenerAdapter {
 
             // Criar conta
             if (firstWord.equalsIgnoreCase("criar")) {
-                commands.criarUsuario(author.getIdLong());
+                commands.checkUser(author);
                 channel.sendMessage(commands.mostrarSaldo(author)).queue();
             }
 

@@ -33,17 +33,11 @@ public class Bets {
     @Autowired
     private UserBetService userBetService;
 
-    public User criarUsuario(Long id){
-        User user = new User();
-        user.setId(id);
-        return this.userService.create(user);
-    }
-
     public User checkUser(net.dv8tion.jda.api.entities.User author){
         Long id = author.getIdLong();
         User user = this.userService.findById(id);
         if (user == null){
-            user = this.criarUsuario(id);
+            user = this.userService.create(new User(id));
         }
         return user;
     }

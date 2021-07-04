@@ -1,9 +1,6 @@
 package br.com.bbc.banco.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
@@ -11,8 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "transactions")
 public class Transaction {
@@ -30,5 +26,13 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "origin_user_id")
     private User originUser;
+
+    public Transaction(){}
+
+    public Transaction(BigDecimal valor, User user, User para){
+        this.valor = valor;
+        this.originUser = user;
+        this.user = para;
+    }
 
 }

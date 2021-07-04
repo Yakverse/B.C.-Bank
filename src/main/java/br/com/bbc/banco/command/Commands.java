@@ -36,16 +36,12 @@ public class Commands {
     @Autowired
     private JokenpoService jokenpoService;
 
-    public User criarUsuario(Long id){
-        User user = new User(id);
-        return this.userService.create(user);
-    }
 
     public User checkUser(net.dv8tion.jda.api.entities.User author){
         Long id = author.getIdLong();
         User user = this.userService.findById(id);
         if (user == null){
-            user = this.criarUsuario(id);
+            user = this.userService.create(new User(id));
         }
         return user;
     }
@@ -82,7 +78,7 @@ public class Commands {
         user.transferir(valor, para);
         this.userService.update(user);
         this.userService.update(para);
-        criaTransacao(valor,user,para);
+        this.transactionService.update(new Transaction(valor,user,para));
     }
 
     public MessageEmbed daily(net.dv8tion.jda.api.entities.User author) throws Exception {
@@ -114,40 +110,6 @@ public class Commands {
         return Embeds.extratoEmbed(author, user, transactions, 0x00000).build();
     }
 
-    public void criaTransacao(BigDecimal valor, User user, User posTransferido ){
-        Transaction transaction = new Transaction();
-        transaction.setValor(valor);
-        transaction.setOriginUser(user);
-        transaction.setUser(posTransferido);
-        this.transactionService.update(transaction);
-    }
-
-    public MessageEmbed criarAposta(net.dv8tion.jda.api.entities.User author, String name, String... options){
-        User user = checkUser(author);
-
-        Bet bet = new Bet();
-        bet.setNome(name);
-        bet.setEndDate(LocalDateTime.now().plusDays(1));
-        bet.setCreatedBy(user);
-        bet = this.betService.create(bet);
-
-        List<Option> listOption = new ArrayList<>();
-
-        for (int i = 0; i < options.length; i++) {
-            Option optionObj = new Option();
-            optionObj.setText(options[i]);
-            optionObj.setNumber(i);
-            optionObj.setBet(bet);
-            listOption.add(this.optionService.create(optionObj));
-        }
-
-        return Embeds.criarApostaEmbed(author, bet, listOption, 0x00000).build();
-    }
-
-    public MessageEmbed apostas(net.dv8tion.jda.api.entities.User author){
-        return Embeds.apostasEmbed(author, 0x00000, this.betService.findAll()).build();
-    }
-
     public MessageEmbed jokenpo(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other, String valueString){
         User player1 = checkUser(author);
         User player2 = checkUser(other);
@@ -165,4 +127,5 @@ public class Commands {
         //Player2 aceita ou recusa ou ignora o jokenpo
         //Player1 e Player2 Dão suas jogadas ou
     }
+
 }
