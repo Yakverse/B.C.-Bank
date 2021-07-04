@@ -23,4 +23,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Transaction> transaction;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserBet> user_bet;
 }

@@ -80,6 +80,13 @@ public class Bot {
                         new OptionData(STRING, "nome", "Nome da Aposta").setRequired(true),
                         new OptionData(STRING, "opcao1", "Opção 1 da aposta").setRequired(true),
                         new OptionData(STRING, "opcao2", "Opção 2 da aposta").setRequired(true)
+                    ),
+
+                new CommandData("apostar", "Aposta em uma opção")
+                    .addOptions(
+                            new OptionData(INTEGER, "id_aposta", "ID da aposta").setRequired(true),
+                            new OptionData(INTEGER, "numero_opcao", "Número da opção na aposta").setRequired(true),
+                            new OptionData(STRING, "valor", "Valor que vai ser apostado na opção").setRequired(true)
                     )
         );
 

@@ -14,4 +14,8 @@ public class OptionService {
     public Option create(Option option){
         return this.optionRepository.save(option);
     }
+
+    public Option findById(long id){
+        return this.optionRepository.findById(id).orElse(null);
+    }
 }

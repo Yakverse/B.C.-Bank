@@ -138,4 +138,37 @@ public class Embeds {
 
         return embed;
     }
+
+    public static EmbedBuilder apostarEmbed(net.dv8tion.jda.api.entities.User author, Bet bet, Option option, String valor, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Aposta registrada!");
+        embed.setColor(cor);
+        embed.addField(String.format("Aposta %s:", bet.getNome()), "", false);
+        embed.addField(String.format("Opção [%d] %s", option.getNumber() + 1, option.getText()), "", false);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostarEmbedErroBet(net.dv8tion.jda.api.entities.User author, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Não foi encontrada nenhuma aposta ativa com esse ID!");
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostarEmbedErroOption(net.dv8tion.jda.api.entities.User author, Bet bet, long optionId, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("Opção %d não encontrada!", optionId));
+        embed.addField(String.format("Opções da aposta %s", bet.getNome()), "", false);
+        for (Option option : bet.getOptions()){
+            embed.addField(String.format("[%d] %s", option.getNumber() + 1, option.getText()), "", false);
+        }
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
 }

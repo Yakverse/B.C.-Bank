@@ -1,5 +1,6 @@
 package br.com.bbc.banco.event;
 
+import br.com.bbc.banco.command.Bets;
 import br.com.bbc.banco.command.Commands;
 import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.embed.Embeds;
@@ -34,6 +35,9 @@ public class Events extends ListenerAdapter {
 
     @Autowired
     private Commands commands;
+
+    @Autowired
+    private Bets bets;
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -101,11 +105,15 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "criaraposta":
-                event.replyEmbeds(commands.criarAposta(event.getUser(), event.getOption("nome").getAsString(), event.getOption("opcao1").getAsString(), event.getOption("opcao2").getAsString())).queue();
+                event.replyEmbeds(bets.criarAposta(event.getUser(), event.getOption("nome").getAsString(), event.getOption("opcao1").getAsString(), event.getOption("opcao2").getAsString())).setEphemeral(true).queue();
                 break;
 
             case "apostas":
-                event.replyEmbeds(commands.apostas(event.getUser())).setEphemeral(true).queue();
+                event.replyEmbeds(bets.apostas(event.getUser())).setEphemeral(true).queue();
+                break;
+
+            case "apostar":
+                event.replyEmbeds(bets.apostar(event.getUser(), event.getOption("id_aposta").getAsLong(), event.getOption("numero_opcao").getAsLong(), event.getOption("valor").getAsString())).setEphemeral(true).queue();
                 break;
         }
 
@@ -183,13 +191,18 @@ public class Events extends ListenerAdapter {
                     String[] newarr = new String[list.size()];
                     list.toArray(newarr);
 
-                    channel.sendMessage(commands.criarAposta(author, nome, newarr)).queue();
+                    channel.sendMessage(bets.criarAposta(author, nome, newarr)).queue();
                 }
             }
 
             //Apostas
             if (firstWord.equalsIgnoreCase("apostas")){
-                channel.sendMessage(commands.apostas(author)).queue();
+                channel.sendMessage(bets.apostas(author)).queue();
+            }
+
+            //Apostar
+            if (firstWord.equalsIgnoreCase("apostar")){
+                channel.sendMessage(bets.apostar(author, Long.parseLong(args[1]), Long.parseLong(args[2]), args[3])).queue();
             }
 
         }

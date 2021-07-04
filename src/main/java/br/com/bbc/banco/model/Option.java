@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +18,10 @@ public class Option {
     private boolean winner;
     private int number;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bet_id")
     private Bet bet;
+
+    @OneToMany(mappedBy = "option")
+    private List<UserBet> user_bet;
 }
