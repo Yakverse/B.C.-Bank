@@ -97,8 +97,8 @@ public class Embeds {
             if( user.getId().equals(transaction.getUser().getId())){
                 net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getOriginUser().getId()).complete();
 
-                beforeMessage = String.format("%s [%s] +%s %.2f",
-                        Emoji.fromUnicode("\uD83D\uDFE2"),
+                beforeMessage = String.format("%s [%s] %s %.2f",
+                        Emoji.fromMarkdown("<:money_increased:861040590409302026>"),
                         dateFormated.toUpperCase(),
                         BotEnumeration.CURRENCY.getValue(),
                         transaction.getValor()
@@ -110,8 +110,8 @@ public class Embeds {
             else{
                 net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getUser().getId()).complete();
 
-                beforeMessage = String.format("%s [%s] -%s %.2f",
-                        Emoji.fromUnicode("\uD83D\uDD34"),
+                beforeMessage = String.format("%s [%s] %s %.2f",
+                        Emoji.fromMarkdown("<:money_decreased:861038910112923668>"),
                         dateFormated.toUpperCase(),
                         BotEnumeration.CURRENCY.getValue(),
                         transaction.getValor()
@@ -129,8 +129,8 @@ public class Embeds {
 
 //        embed.addBlankField(false);
         embed.addField(
-                String.format("Saldo - %s %.2f", BotEnumeration.CURRENCY.getValue(), user.getSaldo()),
-                "",
+                "Saldo",
+                String.format("%s %.2f", BotEnumeration.CURRENCY.getValue(), user.getSaldo()),
                 false
         );
 

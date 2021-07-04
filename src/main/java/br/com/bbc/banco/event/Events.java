@@ -7,10 +7,12 @@ import br.com.bbc.banco.enumeration.BotEnumeration;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.ExceptionEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.IEventManager;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.nio.channels.Channel;
 import java.time.LocalDateTime;
@@ -108,6 +111,7 @@ public class Events extends ListenerAdapter {
 
     }
 
+    @SneakyThrows
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if(event.getMessage().getAuthor().isBot()) return;
@@ -121,76 +125,73 @@ public class Events extends ListenerAdapter {
 
         if(args[0].startsWith(BotEnumeration.PREFIX.getValue())) {
 
-            try {
-
-                // Criar conta
-                if (firstWord.equalsIgnoreCase("criar")) {
-                    commands.criarUsuario(author.getIdLong());
-                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
-                }
-
-                // Saldo
-                if (firstWord.equalsIgnoreCase("saldo")) {
-                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
-                }
-
-                // Depositar
-                if (firstWord.equalsIgnoreCase("depositar")) {
-                    commands.depositar(author, args[1]);
-                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
-                }
-
-                //Sacar
-                if (firstWord.equalsIgnoreCase("sacar")) {
-                    if (args.length > 2) throw new Exception();
-
-                    commands.sacar(author, args[1]);
-                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
-                }
-
-
-                //Transferir
-                if (firstWord.equalsIgnoreCase("transferir")) {
-                    if (args.length > 3) throw new Exception();
-
-                    List<User> users = event.getMessage().getMentionedUsers();
-                    if (users.size() > 1) throw new Exception();
-
-                    commands.transferir(author, args[1], users.get(0));
-                    channel.sendMessage(commands.mostrarSaldo(author)).queue();
-                }
-
-                //Daily
-                if (firstWord.equalsIgnoreCase("daily")){
-                    channel.sendMessage(commands.daily(event.getAuthor())).queue();
-                }
-
-                //Criar Aposta
-                if (firstWord.equalsIgnoreCase("criaraposta")){
-                    if (args.length < 4) channel.sendMessage(Embeds.criarApostaEmbedError(author, 0x00000).build()).queue();
-                    else {
-                        String nome = args[1];
-
-                        List<String> list = Arrays.asList(args);
-                        list = list.subList(2, args.length);
-
-                        String[] newarr = new String[list.size()];
-                        list.toArray(newarr);
-
-                        channel.sendMessage(commands.criarAposta(author, nome, newarr)).queue();
-                    }
-                }
-
-                //Apostas
-                if (firstWord.equalsIgnoreCase("apostas")){
-                    channel.sendMessage(commands.apostas(author)).queue();
-                }
-
-            } catch (Exception e) {
-                System.out.println(e);
-                commands.erro(author, event.getChannel());
-                System.out.println(e);
+            if (firstWord.equalsIgnoreCase("teste")) {
+                throw new AbstractMethodError();
             }
+
+            // Criar conta
+            if (firstWord.equalsIgnoreCase("criar")) {
+                commands.criarUsuario(author.getIdLong());
+                channel.sendMessage(commands.mostrarSaldo(author)).queue();
+            }
+
+            // Saldo
+            if (firstWord.equalsIgnoreCase("saldo")) {
+                channel.sendMessage(commands.mostrarSaldo(author)).queue();
+            }
+
+            // Depositar
+            if (firstWord.equalsIgnoreCase("depositar")) {
+                commands.depositar(author, args[1]);
+                channel.sendMessage(commands.mostrarSaldo(author)).queue();
+            }
+
+            //Sacar
+            if (firstWord.equalsIgnoreCase("sacar")) {
+                if (args.length > 2) throw new Exception();
+
+                commands.sacar(author, args[1]);
+                channel.sendMessage(commands.mostrarSaldo(author)).queue();
+            }
+
+
+            //Transferir
+            if (firstWord.equalsIgnoreCase("transferir")) {
+                if (args.length > 3) throw new Exception();
+
+                List<User> users = event.getMessage().getMentionedUsers();
+                if (users.size() > 1) throw new Exception();
+
+                commands.transferir(author, args[1], users.get(0));
+                channel.sendMessage(commands.mostrarSaldo(author)).queue();
+            }
+
+            //Daily
+            if (firstWord.equalsIgnoreCase("daily")){
+                channel.sendMessage(commands.daily(event.getAuthor())).queue();
+            }
+
+            //Criar Aposta
+            if (firstWord.equalsIgnoreCase("criaraposta")){
+                if (args.length < 4) channel.sendMessage(Embeds.criarApostaEmbedError(author, 0x00000).build()).queue();
+                else {
+                    String nome = args[1];
+
+                    List<String> list = Arrays.asList(args);
+                    list = list.subList(2, args.length);
+
+                    String[] newarr = new String[list.size()];
+                    list.toArray(newarr);
+
+                    channel.sendMessage(commands.criarAposta(author, nome, newarr)).queue();
+                }
+            }
+
+            //Apostas
+            if (firstWord.equalsIgnoreCase("apostas")){
+                channel.sendMessage(commands.apostas(author)).queue();
+            }
+
         }
     }
 }

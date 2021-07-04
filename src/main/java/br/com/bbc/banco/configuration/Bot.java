@@ -55,34 +55,32 @@ public class Bot {
                 new CommandData("saldo", "Mostra o seu saldo"),
                 new CommandData("daily", "Recompensa diária"),
                 new CommandData("apostas", "Mostra todas as apostas disponíveis."),
-                new CommandData("extrato", "Mostra seu extrato")
-        );
+                new CommandData("extrato", "Mostra seu extrato"),
 
-        commands.addCommands(
                 new CommandData("say", "Faça o bot falar o que você disse")
-                        .addOptions(new OptionData(STRING, "conteúdo", "O que o bot deve dizer")
-                                .setRequired(true)),
+                    .addOptions(new OptionData(STRING, "conteúdo", "O que o bot deve dizer")
+                        .setRequired(true)),
 
                 new CommandData("depositar", "Deposita dinheiro")
-                        .addOptions(new OptionData(STRING, "valor", "O quanto você vai depositar")
-                                .setRequired(true)),
+                    .addOptions(new OptionData(STRING, "valor", "O quanto você vai depositar")
+                        .setRequired(true)),
 
                 new CommandData("sacar", "Retira dinheiro")
-                        .addOptions(new OptionData(STRING, "valor", "O quanto você vai retirar")
-                                .setRequired(true)),
+                    .addOptions(new OptionData(STRING, "valor", "O quanto você vai retirar")
+                        .setRequired(true)),
 
                 new CommandData("transferir", "Retira dinheiro")
-                        .addOptions(
-                                new OptionData(STRING, "valor", "O quanto você vai transferir").setRequired(true),
-                                new OptionData(USER, "pessoa", "Pessoa que recebe o dinheiro").setRequired(true)
-                        ),
+                    .addOptions(
+                        new OptionData(STRING, "valor", "O quanto você vai transferir").setRequired(true),
+                        new OptionData(USER, "pessoa", "Pessoa que recebe o dinheiro").setRequired(true)
+                    ),
 
                 new CommandData("criaraposta", "Cria uma aposta")
-                        .addOptions(
-                                new OptionData(STRING, "nome", "Nome da Aposta").setRequired(true),
-                                new OptionData(STRING, "opcao1", "Opção 1 da aposta").setRequired(true),
-                                new OptionData(STRING, "opcao2", "Opção 2 da aposta").setRequired(true)
-                        )
+                    .addOptions(
+                        new OptionData(STRING, "nome", "Nome da Aposta").setRequired(true),
+                        new OptionData(STRING, "opcao1", "Opção 1 da aposta").setRequired(true),
+                        new OptionData(STRING, "opcao2", "Opção 2 da aposta").setRequired(true)
+                    )
         );
 
 
