@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -21,5 +22,5 @@ public class Jokenpo {
     private String player1Pick;
     private long player2Id;
     private String player2Pick;
-    private long value;
+    private BigDecimal value;
 }

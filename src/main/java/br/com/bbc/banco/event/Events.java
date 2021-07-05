@@ -3,7 +3,6 @@ package br.com.bbc.banco.event;
 import br.com.bbc.banco.command.Bets;
 import br.com.bbc.banco.command.Commands;
 import br.com.bbc.banco.command.Jokenpos;
-import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.util.UserUtils;
@@ -192,7 +191,7 @@ public class Events extends ListenerAdapter {
     public void onButtonClick(@NotNull ButtonClickEvent event){
         switch (event.getButton().getId()){
             case "aceitarJokenpo":
-                event.editMessageEmbeds(jokenpos.respostaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1],true))
+                event.editMessageEmbeds(jokenpos.respostaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1],true,event.getMessage()))
                     .setActionRow(
                         Button.secondary("pedraJokenpo",Emoji.fromUnicode("U+270A")),
                         Button.secondary("papelJokenpo",Emoji.fromUnicode("U+270B")),
@@ -200,16 +199,21 @@ public class Events extends ListenerAdapter {
                     ).queue();
                 break;
             case "recusarJokenpo":
-                jokenpos.respostaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1],false);
+                jokenpos.respostaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1],false, event.getMessage());
                 break;
 
             case "pedraJokenpo":
             case "papelJokenpo":
             case "tesouraJokenpo":
                 MessageEmbed messageEmbed = jokenpos.escolheOpcao(event.getUser(),event.getButton().getId().split("Jokenpo")[0],event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1]);
-                if(messageEmbed != null) event.editMessageEmbeds(messageEmbed).queue();
-
-
+                if(messageEmbed != null){
+                    event.editMessageEmbeds(messageEmbed).setActionRow(
+                            Button.danger("recusarJokenpo", Emoji.fromUnicode("U+2716"))
+                    ).queue();
+                }
+                else{
+                    event.replyEmbeds(jokenpos.replyOption(event.getButton().getId())).setEphemeral(true).queue();
+                }
         }
     }
 }

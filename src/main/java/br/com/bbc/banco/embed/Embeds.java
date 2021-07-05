@@ -4,13 +4,9 @@ import br.com.bbc.banco.configuration.Bot;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.model.*;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emoji;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.springframework.context.support.EmbeddedValueResolutionSupport;
 
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -179,7 +175,7 @@ public class Embeds {
         return embed;
     }
 
-    public static EmbedBuilder criarJokenpoEmbed(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other , long value, long id){
+    public static EmbedBuilder criarJokenpoEmbed(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other , BigDecimal value, long id){
         EmbedBuilder embed = new EmbedBuilder();
 
         String title = String.format("%s Jokenpo %s",
@@ -190,7 +186,7 @@ public class Embeds {
 
         String message = String.format("%s te desafiou!",author.getName());
 
-        String underMessage = String.format("Valor: %s %d",
+        String underMessage = String.format("Valor: %s %.2f",
             BotEnumeration.CURRENCY.getValue(),
             value
         );
@@ -215,7 +211,7 @@ public class Embeds {
         return embed;
     }
 
-    public static EmbedBuilder jokenpoEmpate(){
+    public static EmbedBuilder jokenpoEmpate(String gameId){
         EmbedBuilder embed = new EmbedBuilder();
 
         String title = String.format("%s Jokenpo %s",
@@ -224,12 +220,12 @@ public class Embeds {
         );
         embed.setTitle(title);
         embed.addField("Empatou","",true);
+        String footer = String.format("GameId#%s", gameId);
+        embed.setFooter(footer);
         return embed;
     }
 
-    public static EmbedBuilder jokenpoGanhador(long winnerId , long loserId){
-        net.dv8tion.jda.api.entities.User winner = Bot.jda.retrieveUserById(winnerId).complete();
-        net.dv8tion.jda.api.entities.User loser = Bot.jda.retrieveUserById(loserId).complete();
+    public static EmbedBuilder jokenpoGanhador(net.dv8tion.jda.api.entities.User winner , net.dv8tion.jda.api.entities.User loser, String gameId){
 
         EmbedBuilder embed = new EmbedBuilder();
 
@@ -246,11 +242,34 @@ public class Embeds {
                 loser.getName()
         );
 
+        String footer = String.format("GameId#%s", gameId);
+        embed.setFooter(footer);
+
         embed.addField(message,messageAfter,true);
         return embed;
 
     }
+    public static EmbedBuilder jokenpoReply(String pick){
+        EmbedBuilder embed = new EmbedBuilder();
 
+        String title = String.format("%s Jokenpo %s",
+                Emoji.fromUnicode("U+270A"),
+                Emoji.fromUnicode("U+270B")
+        );
+        embed.setTitle(title);
+        Emoji emoji = Emoji.fromUnicode("U+270A");
+        switch (pick){
+            case "pedra":
+                emoji = Emoji.fromUnicode("U+270A");
+            case "papel":
+                emoji = Emoji.fromUnicode("U+270B");
+            case "tesoura":
+                emoji = Emoji.fromUnicode("U+270C");
+        }
 
+        String message = String.format("Você escolheu %s",emoji);
+        embed.addField(message,"",true);
 
+        return embed;
+    }
 }
