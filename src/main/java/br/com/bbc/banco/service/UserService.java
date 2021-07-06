@@ -19,8 +19,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User create(User user) throws ContaJaExisteException {
-        User newUser = this.findById(user.getId());
-        if (newUser != null){
+        if (this.findById(user.getId()) != null){
             throw new ContaJaExisteException();
         }
         return this.userRepository.save(user);
