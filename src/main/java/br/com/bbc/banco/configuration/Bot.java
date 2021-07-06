@@ -61,14 +61,6 @@ public class Bot {
                     .addOptions(new OptionData(STRING, "conteúdo", "O que o bot deve dizer")
                         .setRequired(true)),
 
-                new CommandData("depositar", "Deposita dinheiro")
-                    .addOptions(new OptionData(STRING, "valor", "O quanto você vai depositar")
-                        .setRequired(true)),
-
-                new CommandData("sacar", "Retira dinheiro")
-                    .addOptions(new OptionData(STRING, "valor", "O quanto você vai retirar")
-                        .setRequired(true)),
-
                 new CommandData("transferir", "Retira dinheiro")
                     .addOptions(
                         new OptionData(STRING, "valor", "O quanto você vai transferir").setRequired(true),

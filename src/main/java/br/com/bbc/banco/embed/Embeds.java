@@ -23,6 +23,16 @@ public class Embeds {
         return embed;
     }
 
+    public static EmbedBuilder contaJaExiste(net.dv8tion.jda.api.entities.User author){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Erro!");
+        embed.addField("Sua conta já existe!", "Para verificar seu saldo, digite /saldo", false);
+        embed.setColor(0x7f2927);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
     public static EmbedBuilder dailyEmbed(net.dv8tion.jda.api.entities.User author, User user, int valor, int cor){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("💰 Seu ganho do dia 💰");

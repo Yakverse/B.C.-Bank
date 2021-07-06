@@ -10,7 +10,6 @@ import br.com.bbc.banco.model.User;
 import br.com.bbc.banco.service.JokenpoService;
 import br.com.bbc.banco.service.TransactionService;
 import br.com.bbc.banco.service.UserService;
-import br.com.bbc.banco.util.UserUtils;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,25 +29,12 @@ public class Jokenpos {
     private JokenpoService jokenpoService;
 
     @Autowired
-    private  UserUtils userUtils;
-
-    @Autowired
     private TransactionService transactionService;
 
 
-    public User checkUser(net.dv8tion.jda.api.entities.User author){
-        Long id = author.getIdLong();
-        User user = this.userService.findById(id);
-        if (user == null){
-            user = this.userService.create(new User(id));
-        }
-        return user;
-    }
-
-
     public MessageEmbed jokenpo(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other, String valueString){
-        User player1 = checkUser(author);
-        User player2 = checkUser(other);
+        User player1 = userService.findOrCreateById(author.getIdLong());
+        User player2 = userService.findOrCreateById(other.getIdLong());
         BigDecimal value = convertStringToBigDecimalReplacingComma(valueString);
 
         Jokenpo jokenpo = new br.com.bbc.banco.model.Jokenpo();
@@ -105,8 +91,8 @@ public class Jokenpos {
                 loser = Bot.jda.retrieveUserById(jokenpo.getPlayer1Id()).complete();
             }
 
-            User userWinner = userUtils.idToUser(winner.getIdLong());
-            User userLoser = userUtils.idToUser(loser.getIdLong());
+            User userWinner = userService.findOrCreateById(winner.getIdLong());
+            User userLoser = userService.findOrCreateById(loser.getIdLong());
 
             userLoser.transferir(jokenpo.getValue(),userWinner);
             userService.update(userLoser);

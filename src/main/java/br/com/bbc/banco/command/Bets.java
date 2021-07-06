@@ -33,17 +33,8 @@ public class Bets {
     @Autowired
     private UserBetService userBetService;
 
-    public User checkUser(net.dv8tion.jda.api.entities.User author){
-        Long id = author.getIdLong();
-        User user = this.userService.findById(id);
-        if (user == null){
-            user = this.userService.create(new User(id));
-        }
-        return user;
-    }
-
     public MessageEmbed criarAposta(net.dv8tion.jda.api.entities.User author, String name, String... options){
-        User user = checkUser(author);
+        User user = userService.findOrCreateById(author.getIdLong());
 
         Bet bet = new Bet();
         bet.setNome(name);
@@ -68,7 +59,7 @@ public class Bets {
     }
 
     public MessageEmbed apostar(net.dv8tion.jda.api.entities.User author, long betId, long optionId, String valor){
-        User user = this.checkUser(author);
+        User user = userService.findOrCreateById(author.getIdLong());
         Bet bet = this.betService.findById(betId);
         if (bet == null) return Embeds.apostarEmbedErroBet(author, 0x00000).build();
 

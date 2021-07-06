@@ -5,9 +5,6 @@ import br.com.bbc.banco.enumeration.TransactionType;
 import br.com.bbc.banco.model.*;
 import br.com.bbc.banco.service.*;
 import br.com.bbc.banco.util.GenericUtils;
-import br.com.bbc.banco.util.UserUtils;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,7 +13,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.List;
 
@@ -34,13 +30,11 @@ public class Commands {
 
     @Autowired
     private OptionService optionService;
-    
-    @Autowired
-    private UserUtils userUtils;
+
 
 
     public MessageEmbed mostrarSaldo(net.dv8tion.jda.api.entities.User author){
-        User user = userUtils.idToUser(author.getIdLong());
+        User user = userService.findOrCreateById(author.getIdLong());
         BigDecimal saldo = user.getSaldo();
         String mensagem = "";
         int cor = 0x00000;
@@ -64,8 +58,8 @@ public class Commands {
 
         BigDecimal valor = GenericUtils.convertStringToBigDecimalReplacingComma(valorString);
 
-        User user = userUtils.idToUser(author.getIdLong());
-        User para = userUtils.idToUser(transferido.getIdLong());
+        User user = userService.findOrCreateById(author.getIdLong());
+        User para = userService.findOrCreateById(transferido.getIdLong());
 
         user.transferir(valor, para);
         this.userService.update(user);
@@ -74,7 +68,7 @@ public class Commands {
     }
 
     public MessageEmbed daily(net.dv8tion.jda.api.entities.User author) throws Exception {
-        User user = userUtils.idToUser(author.getIdLong());
+        User user = userService.findOrCreateById(author.getIdLong());
         if (user.getUltimoDaily().until(LocalDateTime.now(), ChronoUnit.DAYS) >= 1) {
             Random rand = new Random();
             int valor = Math.round(100 * (rand.nextFloat() + 1));
@@ -95,7 +89,7 @@ public class Commands {
     }
 
     public MessageEmbed mostrarExtrato(net.dv8tion.jda.api.entities.User author){
-        User user = userUtils.idToUser(author.getIdLong());
+        User user = userService.findOrCreateById(author.getIdLong());
 
         List<Transaction> transactions = this.transactionService.findByUserId(user.getId());
 

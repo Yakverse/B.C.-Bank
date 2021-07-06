@@ -5,7 +5,8 @@ import br.com.bbc.banco.command.Commands;
 import br.com.bbc.banco.command.Jokenpos;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.BotEnumeration;
-import br.com.bbc.banco.util.UserUtils;
+import br.com.bbc.banco.exception.ContaJaExisteException;
+import br.com.bbc.banco.service.UserService;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -35,7 +36,7 @@ public class Events extends ListenerAdapter {
     private Jokenpos jokenpos;
 
     @Autowired
-    private UserUtils userUtils;
+    private UserService userService;
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -74,8 +75,12 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "criar":
-                userUtils.idToUser(event.getUser().getIdLong());
-                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
+                try{
+                    userService.create(new br.com.bbc.banco.model.User(event.getUser().getIdLong()));
+                    event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
+                } catch (ContaJaExisteException e){
+                    event.replyEmbeds(Embeds.contaJaExiste(event.getUser()).build()).setEphemeral(true).queue();
+                }
                 break;
 
             case "transferir":
@@ -132,7 +137,7 @@ public class Events extends ListenerAdapter {
 
             // Criar conta
             if (firstWord.equalsIgnoreCase("criar")) {
-                userUtils.idToUser(author.getIdLong());
+                userService.findOrCreateById(author.getIdLong());
                 channel.sendMessage(commands.mostrarSaldo(author)).queue();
             }
 
