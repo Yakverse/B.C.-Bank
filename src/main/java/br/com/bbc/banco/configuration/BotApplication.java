@@ -45,7 +45,6 @@ public class BotApplication {
                 .build();
 
         CommandListUpdateAction commands = jda.updateCommands();
-
         commands.addCommands(
                 new CommandData("ping", "Ping-Pong com o bot"),
                 new CommandData("convite", "Te envia o convite para o bot"),
