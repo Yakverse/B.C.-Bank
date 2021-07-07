@@ -117,7 +117,6 @@ public class Events extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if(event.getMessage().getAuthor().isBot()) return;
-        if(!event.getMessage().getAttachments().isEmpty()) return;
 
         String[] args = event.getMessage().getContentRaw().split(" ");
         String firstWord = args[0].substring(1);
