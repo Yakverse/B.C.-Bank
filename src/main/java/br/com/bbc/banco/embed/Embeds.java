@@ -1,6 +1,6 @@
 package br.com.bbc.banco.embed;
 
-import br.com.bbc.banco.configuration.Bot;
+import br.com.bbc.banco.configuration.BotApplication;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.model.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -113,7 +113,7 @@ public class Embeds {
                 String dateFormated = transaction.getDate().format(formatter);
 
                 if( user.getId().equals(transaction.getUser().getId())){
-                    net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getOriginUser().getId()).complete();
+                    net.dv8tion.jda.api.entities.User userRetrieved = BotApplication.jda.retrieveUserById(transaction.getOriginUser().getId()).complete();
 
                     beforeMessage = String.format("%s [%s] %s %.2f",
                             Emoji.fromMarkdown("<:money_increased:861040590409302026>"),
@@ -126,7 +126,7 @@ public class Embeds {
                     );
                 }
                 else{
-                    net.dv8tion.jda.api.entities.User userRetrieved = Bot.jda.retrieveUserById(transaction.getUser().getId()).complete();
+                    net.dv8tion.jda.api.entities.User userRetrieved = BotApplication.jda.retrieveUserById(transaction.getUser().getId()).complete();
 
                     beforeMessage = String.format("%s [%s] %s %.2f",
                             Emoji.fromMarkdown("<:money_decreased:861038910112923668>"),

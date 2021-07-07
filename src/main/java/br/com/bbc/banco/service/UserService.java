@@ -22,7 +22,9 @@ public class UserService {
         if (this.findById(user.getId()) != null){
             throw new ContaJaExisteException();
         }
-        return this.userRepository.save(user);
+        User newUser = this.userRepository.save(user);
+        Optional.of(newUser).ifPresent(u -> Hibernate.initialize(u.getTransactions()));
+        return newUser;
     }
 
     @Transactional()
@@ -44,7 +46,7 @@ public class UserService {
         return user;
     }
 
-    public User update(User user){
-        return this.userRepository.save(user);
+    public void update(User user){
+        this.userRepository.save(user);
     }
 }

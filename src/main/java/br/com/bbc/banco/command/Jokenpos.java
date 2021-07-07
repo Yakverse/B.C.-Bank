@@ -1,6 +1,6 @@
 package br.com.bbc.banco.command;
 
-import br.com.bbc.banco.configuration.Bot;
+import br.com.bbc.banco.configuration.BotApplication;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.TransactionType;
 import br.com.bbc.banco.exception.PlayerErradoException;
@@ -83,12 +83,12 @@ public class Jokenpos {
 
 
             if (winnerNumber == 1){
-                winner = Bot.jda.retrieveUserById(jokenpo.getPlayer1Id()).complete();
-                loser = Bot.jda.retrieveUserById(jokenpo.getPlayer2Id()).complete();
+                winner = BotApplication.jda.retrieveUserById(jokenpo.getPlayer1Id()).complete();
+                loser = BotApplication.jda.retrieveUserById(jokenpo.getPlayer2Id()).complete();
             }
             else{
-                winner = Bot.jda.retrieveUserById(jokenpo.getPlayer2Id()).complete();
-                loser = Bot.jda.retrieveUserById(jokenpo.getPlayer1Id()).complete();
+                winner = BotApplication.jda.retrieveUserById(jokenpo.getPlayer2Id()).complete();
+                loser = BotApplication.jda.retrieveUserById(jokenpo.getPlayer1Id()).complete();
             }
 
             User userWinner = userService.findOrCreateById(winner.getIdLong());

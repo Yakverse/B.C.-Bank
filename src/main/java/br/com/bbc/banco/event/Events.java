@@ -55,11 +55,6 @@ public class Events extends ListenerAdapter {
                         ).queue(); // Queue both reply and edit
                 break;
 
-            case "say":
-                event.reply(event.getOption("conteúdo").getAsString()) // reply or acknowledge
-                        .queue(); // Queue both reply and edit
-                break;
-
             case "convite":
                 event.reply(String.format("%s", (Emoji.fromUnicode("\u200E"))))
                         .addActionRow(

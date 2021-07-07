@@ -29,7 +29,7 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 
 @Configuration
-public class Bot {
+public class BotApplication {
 
     @Autowired
     private Events events;
@@ -44,8 +44,6 @@ public class Bot {
                 .setActivity(Activity.playing("o Charlão na cama"))
                 .build();
 
-        jda.upsertCommand("ping", "Calculate ping of the bot").queue();
-
         CommandListUpdateAction commands = jda.updateCommands();
 
         commands.addCommands(
@@ -56,10 +54,6 @@ public class Bot {
                 new CommandData("daily", "Recompensa diária"),
                 new CommandData("apostas", "Mostra todas as apostas disponíveis."),
                 new CommandData("extrato", "Mostra seu extrato"),
-
-                new CommandData("say", "Faça o bot falar o que você disse")
-                    .addOptions(new OptionData(STRING, "conteúdo", "O que o bot deve dizer")
-                        .setRequired(true)),
 
                 new CommandData("transferir", "Retira dinheiro")
                     .addOptions(
