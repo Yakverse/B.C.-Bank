@@ -17,7 +17,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional()
     public User create(User user) throws ContaJaExisteException {
         if (this.findById(user.getId()) != null){
             throw new ContaJaExisteException();
@@ -25,14 +25,14 @@ public class UserService {
         return this.userRepository.save(user);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional()
     public User findById(Long id){
         Optional<User> user = this.userRepository.findById(id);
         user.ifPresent(u -> Hibernate.initialize(u.getTransactions()));
         return user.orElse(null);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional()
     public User findOrCreateById(Long id){
         User user;
         try{

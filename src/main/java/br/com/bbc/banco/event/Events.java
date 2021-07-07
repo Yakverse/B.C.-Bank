@@ -77,7 +77,7 @@ public class Events extends ListenerAdapter {
             case "criar":
                 try{
                     userService.create(new br.com.bbc.banco.model.User(event.getUser().getIdLong()));
-                    event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
+                    event.replyEmbeds(Embeds.contaCriadaComSucesso(event.getUser()).build()).setEphemeral(true).queue();
                 } catch (ContaJaExisteException e){
                     event.replyEmbeds(Embeds.contaJaExiste(event.getUser()).build()).setEphemeral(true).queue();
                 }

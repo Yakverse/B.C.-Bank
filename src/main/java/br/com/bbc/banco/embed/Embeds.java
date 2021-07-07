@@ -26,8 +26,18 @@ public class Embeds {
     public static EmbedBuilder contaJaExiste(net.dv8tion.jda.api.entities.User author){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Erro!");
-        embed.addField("Sua conta já existe!", "Para verificar seu saldo, digite /saldo", false);
+        embed.addField("Sua conta já existe!", "Digite /saldo para verificar seu saldo.", false);
         embed.setColor(0x7f2927);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder contaCriadaComSucesso(net.dv8tion.jda.api.entities.User author){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Sucesso!");
+        embed.addField("Sua conta foi criada!", "Digite /saldo para verificar seu saldo.", false);
+        embed.setColor(0x80b461);
         embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
 
         return embed;
