@@ -58,7 +58,7 @@ public class Bets {
         return Embeds.apostasEmbed(author, 0x00000, this.betService.findAll()).build();
     }
 
-    public MessageEmbed apostar(net.dv8tion.jda.api.entities.User author, long betId, long optionId, String valor){
+    public MessageEmbed apostar(net.dv8tion.jda.api.entities.User author, long betId, long optionId, String valor) throws Exception {
         User user = userService.findOrCreateById(author.getIdLong());
         Bet bet = this.betService.findById(betId);
         if (bet == null) return Embeds.apostarEmbedErroBet(author, 0x00000).build();
@@ -69,6 +69,9 @@ public class Bets {
 
         for (Option option : bet.getOptions()) {
             if ((option.getNumber() + 1) == optionId){
+                user.sacar(new BigDecimal(valor));
+                this.userService.update(user);
+
                 userBet.setOption(option);
                 this.userBetService.create(userBet);
                 return Embeds.apostarEmbed(author, bet, option, valor, 0x00000).build();
