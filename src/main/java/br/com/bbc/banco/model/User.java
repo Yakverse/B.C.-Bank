@@ -36,20 +36,22 @@ public class User {
         this.id = id;
     }
 
-    public Boolean saldoSuficiente(BigDecimal valor) throws Exception {
+    public void saldoSuficiente(BigDecimal valor) throws Exception {
         if ((this.saldo.subtract(valor)).compareTo(BigDecimal.ZERO) < 0) throw new SaldoInsuficienteException();
-        if (valor.compareTo(BigDecimal.ZERO) <= 0) throw new ValorInvalidoException();
+        this.valorValido(valor);
+    }
 
-        return true;
+    public void valorValido(BigDecimal valor) throws ValorInvalidoException{
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) throw new ValorInvalidoException();
     }
 
     public void sacar(BigDecimal valor) throws Exception {
-        if (this.saldoSuficiente(valor)) this.saldo = saldo.subtract(valor);
+        this.saldoSuficiente(valor);
+        this.saldo = saldo.subtract(valor);
     }
 
     public void depositar(BigDecimal valor) throws Exception{
-        if (valor.compareTo(BigDecimal.ZERO) <= 0) throw new ValorInvalidoException();
-
+        this.valorValido(valor);
         this.saldo = saldo.add(valor);
     }
 

@@ -33,6 +33,49 @@ public class Embeds {
         return embed;
     }
 
+    public static EmbedBuilder saldoInsuficiente(net.dv8tion.jda.api.entities.User author){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Erro!");
+        embed.addField("Saldo insuficiente!", "Digite /saldo para verificar seu saldo.", false);
+        embed.setColor(0x7f2927);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder valorInvalido(net.dv8tion.jda.api.entities.User author){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Erro!");
+        embed.addField("Valor inválido!", "O valor que você passou é inválido. Tente novamente com outro valor.", false);
+        embed.setColor(0x7f2927);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder transferenciaRealizadaComSucesso(net.dv8tion.jda.api.entities.User author, String valor, net.dv8tion.jda.api.entities.User para){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Sucesso!");
+        embed.addField(
+                "Transferência realizada com sucesso!",
+                String.format("Você transferiu %s %s para %s", BotEnumeration.CURRENCY.getValue(), valor, para.getName()),
+                false);
+        embed.setColor(0x80b461);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder erroAoRelizarTransferencia(net.dv8tion.jda.api.entities.User author){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Erro!");
+        embed.addField("Houve um erro ao realizar essa transferência!", "Se o erro persistir, chame um administrador.", false);
+        embed.setColor(0x7f2927);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
     public static EmbedBuilder contaCriadaComSucesso(net.dv8tion.jda.api.entities.User author){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Sucesso!");

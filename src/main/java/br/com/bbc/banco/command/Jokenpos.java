@@ -4,6 +4,7 @@ import br.com.bbc.banco.configuration.BotApplication;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.TransactionType;
 import br.com.bbc.banco.exception.PlayerErradoException;
+import br.com.bbc.banco.exception.ValorInvalidoException;
 import br.com.bbc.banco.model.Jokenpo;
 import br.com.bbc.banco.model.Transaction;
 import br.com.bbc.banco.model.User;
@@ -32,7 +33,7 @@ public class Jokenpos {
     private TransactionService transactionService;
 
 
-    public MessageEmbed jokenpo(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other, String valueString){
+    public MessageEmbed jokenpo(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other, String valueString) throws ValorInvalidoException {
         User player1 = userService.findOrCreateById(author.getIdLong());
         User player2 = userService.findOrCreateById(other.getIdLong());
         BigDecimal value = convertStringToBigDecimalReplacingComma(valueString);

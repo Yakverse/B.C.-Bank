@@ -6,6 +6,8 @@ import br.com.bbc.banco.command.Jokenpos;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.exception.ContaJaExisteException;
+import br.com.bbc.banco.exception.SaldoInsuficienteException;
+import br.com.bbc.banco.exception.ValorInvalidoException;
 import br.com.bbc.banco.service.UserService;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.entities.*;
@@ -79,8 +81,16 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "transferir":
-                commands.transferir(event.getUser(), event.getOption("valor").getAsString(), event.getOption("pessoa").getAsUser());
-                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
+                try{
+                    commands.transferir(event.getUser(), event.getOption("valor").getAsString(), event.getOption("pessoa").getAsUser());
+                    event.replyEmbeds(Embeds.transferenciaRealizadaComSucesso(event.getUser(), event.getOption("valor").getAsString(), event.getOption("pessoa").getAsUser()).build()).setEphemeral(true).queue();
+                } catch (SaldoInsuficienteException saldoInsuficienteException){
+                    event.replyEmbeds(Embeds.saldoInsuficiente(event.getUser()).build()).setEphemeral(true).queue();
+                } catch (ValorInvalidoException valorInvalidoException){
+                    event.replyEmbeds(Embeds.valorInvalido(event.getUser()).build()).setEphemeral(true).queue();
+                } catch (Exception e){
+                    event.replyEmbeds(Embeds.erroAoRelizarTransferencia(event.getUser()).build()).setEphemeral(true).queue();
+                }
                 break;
 
             case "daily":
@@ -116,7 +126,8 @@ public class Events extends ListenerAdapter {
     @SneakyThrows
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if(event.getMessage().getAuthor().isBot()) return;
+        if (event.getMessage().getAuthor().isBot()) return;
+        if (!event.getMessage().getAttachments().isEmpty()) return;
 
         String[] args = event.getMessage().getContentRaw().split(" ");
         String firstWord = args[0].substring(1);
