@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.Emoji;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -139,6 +141,15 @@ public class Embeds {
         return embed;
     }
 
+    public static EmbedBuilder semApostas(net.dv8tion.jda.api.entities.User author, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Nenhuma aposta ativa no momento.");
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
     public static EmbedBuilder extratoEmbed(net.dv8tion.jda.api.entities.User author, User user, List<Transaction> transactions, int cor){
 
         EmbedBuilder embed = new EmbedBuilder();
@@ -232,6 +243,82 @@ public class Embeds {
         for (Option option : bet.getOptions()){
             embed.addField(String.format("[%d] %s", option.getNumber() + 1, option.getText()), "", false);
         }
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostarEmbedErroFechada(net.dv8tion.jda.api.entities.User author, Bet bet, List<Option> options, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("%s já foi fechada!", bet.getNome()));
+        for (Option option : options) {
+            if (option.isWinner()){
+                embed.addField("A opção vencedora foi:", String.format("[%d] %s", option.getNumber(), option.getText()), false);
+                break;
+            }
+        }
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostaEmbed(net.dv8tion.jda.api.entities.User author, Bet bet, List<Option> options, int totalBets, List<Integer> listQnt, List<BigDecimal> listTotal, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("[%d] %s", bet.getId(), bet.getNome()));
+
+        for (Option option : options) {
+            embed.addField(String.format("[%d] %s:", option.getNumber() + 1, option.getText()), String.format("%d%% - %s%.2f", Math.round(((double) listQnt.get(option.getNumber()) / totalBets) * 100), BotEnumeration.CURRENCY.getValue(), listTotal.get(option.getNumber())), false);
+        }
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostaFinalizadaEmbed(net.dv8tion.jda.api.entities.User author, Bet bet, Option option, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("[%d] %s finalizada!", bet.getId(), bet.getNome()));
+        embed.addField(String.format("[%d] %s declarada vencedora!", option.getNumber() + 1, option.getText()), "", true);
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostaFinalizadaEmbedErroOpcao(net.dv8tion.jda.api.entities.User author, long optionId, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("Opcão [%d] não existe!", optionId));
+        embed.addField("Use /aposta ou $aposta para ver as opções.", "", false);
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostaFinalizadaEmbedErroFechada(net.dv8tion.jda.api.entities.User author, Bet bet,int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("[%d] %s já foi finalizada!", bet.getId(), bet.getNome()));
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostaFinalizadaEmbedErroAuthor(net.dv8tion.jda.api.entities.User author, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Somente o criador da aposta pode finaliza-la.");
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder apostaEmbedErro(net.dv8tion.jda.api.entities.User author, long id, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("Aposta %d não encontrada.", id));
+        embed.addField("Use /apostas ou $apostas para ver as apostas ativas.", "", false);
         embed.setColor(cor);
         embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
 
