@@ -14,8 +14,9 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-@Data
 @Entity
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
     @Id

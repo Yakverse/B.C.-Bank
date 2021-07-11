@@ -101,7 +101,7 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "criaraposta":
-                event.replyEmbeds(bets.criarAposta(event.getUser(), event.getOption("nome").getAsString(), event.getOption("opcao1").getAsString(), event.getOption("opcao2").getAsString())).setEphemeral(true).queue();
+                event.replyEmbeds(bets.criarAposta(event.getUser(), event.getOption("nome").getAsString(), event.getOption("opcao1").getAsString(), event.getOption("opcao2").getAsString())).queue();
                 break;
 
             case "apostas":
@@ -110,6 +110,14 @@ public class Events extends ListenerAdapter {
 
             case "apostar":
                 event.replyEmbeds(bets.apostar(event.getUser(), event.getOption("id_aposta").getAsLong(), event.getOption("numero_opcao").getAsLong(), event.getOption("valor").getAsString())).setEphemeral(true).queue();
+                break;
+
+            case "aposta":
+                event.replyEmbeds(bets.aposta(event.getUser(), event.getOption("id_aposta").getAsLong())).setEphemeral(true).queue();
+                break;
+
+            case "finalizar":
+                event.replyEmbeds(bets.finalizaAposta(event.getUser(), event.getOption("id_aposta").getAsLong(), event.getOption("numero_opcao").getAsLong())).setEphemeral(true).queue();
                 break;
 
             case "jokenpo":
@@ -190,6 +198,16 @@ public class Events extends ListenerAdapter {
             //Apostar
             if (firstWord.equalsIgnoreCase("apostar")){
                 channel.sendMessage(bets.apostar(author, Long.parseLong(args[1]), Long.parseLong(args[2]), args[3])).queue();
+            }
+
+            //Aposta
+            if (firstWord.equalsIgnoreCase("aposta")){
+                channel.sendMessage(bets.aposta(author, Long.parseLong(args[1]))).queue();
+            }
+
+            //FinalizarAposta
+            if (firstWord.equalsIgnoreCase("finalizar")){
+                channel.sendMessage(bets.finalizaAposta(author, Long.parseLong(args[1]), Long.parseLong(args[2]))).queue();
             }
 
         }
