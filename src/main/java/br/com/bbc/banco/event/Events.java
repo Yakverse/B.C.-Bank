@@ -1,8 +1,6 @@
 package br.com.bbc.banco.event;
 
-import br.com.bbc.banco.command.Bets;
-import br.com.bbc.banco.command.Commands;
-import br.com.bbc.banco.command.Jokenpos;
+import br.com.bbc.banco.command.*;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.exception.ContaJaExisteException;
@@ -40,6 +38,12 @@ public class Events extends ListenerAdapter {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private SaldoCommand saldoCommand;
+
+    @Autowired
+    private CriarCommand criarCommand;
+
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         System.out.printf("[%s] Bot Online!%n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss")));
@@ -68,16 +72,11 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "saldo":
-                event.replyEmbeds(commands.mostrarSaldo(event.getUser())).setEphemeral(true).queue();
+                this.saldoCommand.execute(event);
                 break;
 
             case "criar":
-                try{
-                    userService.create(new br.com.bbc.banco.model.User(event.getUser().getIdLong()));
-                    event.replyEmbeds(Embeds.contaCriadaComSucesso(event.getUser()).build()).setEphemeral(true).queue();
-                } catch (ContaJaExisteException e){
-                    event.replyEmbeds(Embeds.contaJaExiste(event.getUser()).build()).setEphemeral(true).queue();
-                }
+                this.criarCommand.execute(event);
                 break;
 
             case "transferir":
@@ -143,25 +142,24 @@ public class Events extends ListenerAdapter {
 
             // Criar conta
             if (firstWord.equalsIgnoreCase("criar")) {
-                userService.findOrCreateById(author.getIdLong());
-                channel.sendMessage(commands.mostrarSaldo(author)).queue();
+                this.criarCommand.execute(event);
             }
 
             // Saldo
             if (firstWord.equalsIgnoreCase("saldo")) {
-                channel.sendMessage(commands.mostrarSaldo(author)).queue();
+                this.saldoCommand.execute(event);
             }
 
             //Transferir
-            if (firstWord.equalsIgnoreCase("transferir")) {
-                if (args.length > 3) throw new Exception();
-
-                List<User> users = event.getMessage().getMentionedUsers();
-                if (users.size() > 1) throw new Exception();
-
-                commands.transferir(author, args[1], users.get(0));
-                channel.sendMessage(commands.mostrarSaldo(author)).queue();
-            }
+//            if (firstWord.equalsIgnoreCase("transferir")) {
+//                if (args.length > 3) throw new Exception();
+//
+//                List<User> users = event.getMessage().getMentionedUsers();
+//                if (users.size() > 1) throw new Exception();
+//
+//                commands.transferir(author, args[1], users.get(0));
+//                channel.sendMessage(commands.mostrarSaldo(author)).queue();
+//            }
 
             //Daily
             if (firstWord.equalsIgnoreCase("daily")){

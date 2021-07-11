@@ -33,26 +33,6 @@ public class Commands {
 
 
 
-    public MessageEmbed mostrarSaldo(net.dv8tion.jda.api.entities.User author){
-        User user = userService.findOrCreateById(author.getIdLong());
-        BigDecimal saldo = user.getSaldo();
-        String mensagem = "";
-        int cor = 0x00000;
-
-        if (saldo.compareTo(BigDecimal.ZERO) > 0){
-            mensagem = "Seu saldo está positivo!";
-            cor = 0x80b461;
-        } else if (saldo.compareTo(BigDecimal.ZERO) == 0){
-            mensagem = "Seu saldo está neutro";
-            cor = 0xd0a843;
-        } else{
-            mensagem = "Seu saldo está negativo!";
-            cor = 0x7f2927;
-        }
-
-        return Embeds.saldoEmbed(author, user, mensagem, cor).build();
-    }
-
     public void transferir(net.dv8tion.jda.api.entities.User author, String valorString, net.dv8tion.jda.api.entities.User transferido) throws Exception {
         if(author.getIdLong() == transferido.getIdLong()) throw new Exception();
 
