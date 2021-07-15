@@ -55,15 +55,24 @@ public class Embeds {
         return embed;
     }
 
-    public static EmbedBuilder transferenciaRealizadaComSucesso(net.dv8tion.jda.api.entities.User author, String valor, net.dv8tion.jda.api.entities.User para){
+    public static EmbedBuilder transferenciaRealizadaComSucesso(net.dv8tion.jda.api.entities.User author, BigDecimal valor, net.dv8tion.jda.api.entities.User para){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("Sucesso!");
         embed.addField(
                 "Transferência realizada com sucesso!",
-                String.format("Você transferiu %s %s para %s", BotEnumeration.CURRENCY.getValue(), valor, para.getName()),
+                String.format("Você transferiu %s %.2f para %s", BotEnumeration.CURRENCY.getValue(), valor, para.getName()),
                 false);
         embed.setColor(0x80b461);
         embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder recebimentoDeTranferencia(net.dv8tion.jda.api.entities.User author, BigDecimal valor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("Você recebeu uma transferência de %s %.2f", BotEnumeration.CURRENCY.getValue(), valor));
+        embed.setColor(0x80b461);
+        embed.setFooter("Transferido por " + author.getName(), author.getAvatarUrl());
 
         return embed;
     }

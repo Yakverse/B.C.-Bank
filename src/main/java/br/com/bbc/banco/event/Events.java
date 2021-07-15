@@ -3,11 +3,12 @@ package br.com.bbc.banco.event;
 import br.com.bbc.banco.command.*;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.enumeration.BotEnumeration;
-import br.com.bbc.banco.exception.ContaJaExisteException;
 import br.com.bbc.banco.exception.SaldoInsuficienteException;
 import br.com.bbc.banco.exception.ValorInvalidoException;
 import br.com.bbc.banco.service.UserService;
+import br.com.bbc.banco.util.Extras;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
@@ -15,15 +16,14 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.Button;
-import net.dv8tion.jda.api.interactions.components.ButtonStyle;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.*;
 
 @Component
+@Slf4j
 public class Events extends ListenerAdapter {
 
     @Autowired
@@ -44,31 +44,25 @@ public class Events extends ListenerAdapter {
     @Autowired
     private CriarCommand criarCommand;
 
+    @Autowired
+    private ConviteCommand conviteCommand;
+
+    @Autowired
+    private TransferirCommand transferirCommand;
+
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        System.out.printf("[%s] Bot Online!%n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss")));
+        Extras.asciibbc();
+        log.info("Bot Online!");
     }
 
     @SneakyThrows
     @Override
     public void onSlashCommand(SlashCommandEvent event) {
         switch (event.getName()){
-            case "ping":
-                long time = System.currentTimeMillis();
-                event.reply("Pong!").setEphemeral(true) // reply or acknowledge
-                        .flatMap(v ->
-                                event.getHook().editOriginalFormat("Pong: %d ms", System.currentTimeMillis() - time) // then edit original
-                        ).queue(); // Queue both reply and edit
-                break;
 
             case "convite":
-                event.reply(String.format("%s", (Emoji.fromUnicode("\u200E"))))
-                        .addActionRow(
-                                Button.link(String.format("%s", BotEnumeration.INVITE_LINK.getValue()), "Convite")
-                                    .withEmoji(Emoji.fromMarkdown("<:charlao_normal_icon:861075166553047060>"))
-                                    .withStyle(ButtonStyle.LINK)
-                                )
-                        .queue();
+                this.conviteCommand.execute(event);
                 break;
 
             case "saldo":
@@ -80,16 +74,7 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "transferir":
-                try{
-                    commands.transferir(event.getUser(), event.getOption("valor").getAsString(), event.getOption("pessoa").getAsUser());
-                    event.replyEmbeds(Embeds.transferenciaRealizadaComSucesso(event.getUser(), event.getOption("valor").getAsString(), event.getOption("pessoa").getAsUser()).build()).setEphemeral(true).queue();
-                } catch (SaldoInsuficienteException saldoInsuficienteException){
-                    event.replyEmbeds(Embeds.saldoInsuficiente(event.getUser()).build()).setEphemeral(true).queue();
-                } catch (ValorInvalidoException valorInvalidoException){
-                    event.replyEmbeds(Embeds.valorInvalido(event.getUser()).build()).setEphemeral(true).queue();
-                } catch (Exception e){
-                    event.replyEmbeds(Embeds.erroAoRelizarTransferencia(event.getUser()).build()).setEphemeral(true).queue();
-                }
+                this.transferirCommand.execute(event);
                 break;
 
             case "daily":
@@ -148,6 +133,10 @@ public class Events extends ListenerAdapter {
             if (firstWord.equalsIgnoreCase("teste")) {
             }
 
+            if (firstWord.equalsIgnoreCase("convite")) {
+                this.conviteCommand.execute(event);
+            }
+
             // Criar conta
             if (firstWord.equalsIgnoreCase("criar")) {
                 this.criarCommand.execute(event);
@@ -159,15 +148,11 @@ public class Events extends ListenerAdapter {
             }
 
             //Transferir
-//            if (firstWord.equalsIgnoreCase("transferir")) {
-//                if (args.length > 3) throw new Exception();
-//
-//                List<User> users = event.getMessage().getMentionedUsers();
-//                if (users.size() > 1) throw new Exception();
-//
-//                commands.transferir(author, args[1], users.get(0));
-//                channel.sendMessage(commands.mostrarSaldo(author)).queue();
-//            }
+            if (firstWord.equalsIgnoreCase("transferir")) {
+                if (args.length > 3) throw new Exception();
+                if (event.getMessage().getMentionedUsers().size() > 1) throw new Exception();
+                this.transferirCommand.execute(event);
+            }
 
             //Daily
             if (firstWord.equalsIgnoreCase("daily")){

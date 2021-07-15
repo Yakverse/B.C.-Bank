@@ -2,6 +2,7 @@ package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.exception.ContaJaExisteException;
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -10,8 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CriarCommand extends Command{
 
-    public final String name = "criar";
-    public final String description = "Criar conta no BBC";
+    @Getter private final String name = "criar";
+    @Getter private final String description = "Criar conta no BBC";
 
     @Override
     public void execute(SlashCommandEvent event) throws Exception {

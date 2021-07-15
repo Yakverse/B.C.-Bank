@@ -32,21 +32,6 @@ public class Commands {
     private OptionService optionService;
 
 
-
-    public void transferir(net.dv8tion.jda.api.entities.User author, String valorString, net.dv8tion.jda.api.entities.User transferido) throws Exception {
-        if(author.getIdLong() == transferido.getIdLong()) throw new Exception();
-
-        BigDecimal valor = GenericUtils.convertStringToBigDecimalReplacingComma(valorString);
-
-        User user = userService.findOrCreateById(author.getIdLong());
-        User para = userService.findOrCreateById(transferido.getIdLong());
-
-        user.transferir(valor, para);
-        this.userService.update(user);
-        this.userService.update(para);
-        this.transactionService.update(new Transaction(valor,user,para, TransactionType.TRANFERENCIA));
-    }
-
     public MessageEmbed daily(net.dv8tion.jda.api.entities.User author) throws Exception {
         User user = userService.findOrCreateById(author.getIdLong());
         if (user.getUltimoDaily().until(LocalDateTime.now(), ChronoUnit.DAYS) >= 1) {
