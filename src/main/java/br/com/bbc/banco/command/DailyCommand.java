@@ -1,12 +1,11 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
-import br.com.bbc.banco.enumeration.TransactionType;
-import br.com.bbc.banco.model.*;
-import br.com.bbc.banco.service.*;
-import br.com.bbc.banco.util.GenericUtils;
+import br.com.bbc.banco.model.User;
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -14,25 +13,24 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Random;
-import java.util.List;
 
 @Component
-public class Commands {
+public class DailyCommand extends Command {
 
-    @Autowired
-    private UserService userService;
+    @Getter private final String name = "daily";
+    @Getter private final String description = "Recompensa diária";
 
-    @Autowired
-    private TransactionService transactionService;
+    @Override
+    public void execute(SlashCommandEvent event) throws Exception {
+        event.replyEmbeds(this.process(event.getUser())).setEphemeral(true).queue();
+    }
 
-    @Autowired
-    private BetService betService;
+    @Override
+    public void execute(MessageReceivedEvent event) throws Exception {
+        event.getChannel().sendMessage(this.process(event.getAuthor())).queue();
+    }
 
-    @Autowired
-    private OptionService optionService;
-
-
-    public MessageEmbed daily(net.dv8tion.jda.api.entities.User author) throws Exception {
+    private MessageEmbed process(net.dv8tion.jda.api.entities.User author) throws Exception{
         User user = userService.findOrCreateById(author.getIdLong());
         if (user.getUltimoDaily().until(LocalDateTime.now(), ChronoUnit.DAYS) >= 1) {
             Random rand = new Random();
@@ -52,13 +50,4 @@ public class Commands {
 
         return Embeds.dailyEmbedError(author, horas, minutos, segundos, 0x00000).build();
     }
-
-    public MessageEmbed mostrarExtrato(net.dv8tion.jda.api.entities.User author){
-        User user = userService.findOrCreateById(author.getIdLong());
-
-        List<Transaction> transactions = this.transactionService.findByUserId(user.getId());
-
-        return Embeds.extratoEmbed(author, user, transactions, 0x00000).build();
-    }
-
 }

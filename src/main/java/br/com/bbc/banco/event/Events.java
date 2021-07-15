@@ -27,9 +27,6 @@ import java.util.*;
 public class Events extends ListenerAdapter {
 
     @Autowired
-    private Commands commands;
-
-    @Autowired
     private Bets bets;
 
     @Autowired
@@ -49,6 +46,12 @@ public class Events extends ListenerAdapter {
 
     @Autowired
     private TransferirCommand transferirCommand;
+
+    @Autowired
+    private ExtratoCommand extratoCommand;
+
+    @Autowired
+    private DailyCommand dailyCommand;
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -78,11 +81,11 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "daily":
-                event.replyEmbeds(commands.daily(event.getUser())).setEphemeral(true).queue();
+                this.dailyCommand.execute(event);
                 break;
 
             case "extrato":
-                event.replyEmbeds(commands.mostrarExtrato(event.getUser())).setEphemeral(true).queue();
+                this.extratoCommand.execute(event);
                 break;
 
             case "criaraposta":
@@ -130,7 +133,8 @@ public class Events extends ListenerAdapter {
 
         if(args[0].startsWith(BotEnumeration.PREFIX.getValue())) {
 
-            if (firstWord.equalsIgnoreCase("teste")) {
+            if (firstWord.equalsIgnoreCase("extrato")) {
+                this.extratoCommand.execute(event);
             }
 
             if (firstWord.equalsIgnoreCase("convite")) {
@@ -156,7 +160,7 @@ public class Events extends ListenerAdapter {
 
             //Daily
             if (firstWord.equalsIgnoreCase("daily")){
-                channel.sendMessage(commands.daily(event.getAuthor())).queue();
+                this.dailyCommand.execute(event);
             }
 
             //Criar Aposta
