@@ -324,6 +324,24 @@ public class Embeds {
         return embed;
     }
 
+    public static EmbedBuilder cancelarApostaEmbed(net.dv8tion.jda.api.entities.User author, Bet bet, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(String.format("Aposta [%d] %s cancelada.", bet.getId(), bet.getNome()));
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
+    public static EmbedBuilder cancelarApostaEmbedErroAuthor(net.dv8tion.jda.api.entities.User author, int cor){
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Somente o criador da aposta pode cancela-la.");
+        embed.setColor(cor);
+        embed.setFooter("Solicitado por " + author.getName(), author.getAvatarUrl());
+
+        return embed;
+    }
+
     public static EmbedBuilder apostaEmbedErro(net.dv8tion.jda.api.entities.User author, long id, int cor){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(String.format("Aposta %d não encontrada.", id));

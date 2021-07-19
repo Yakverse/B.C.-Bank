@@ -21,7 +21,7 @@ public class Bet {
     private LocalDateTime startDate = LocalDateTime.now();
     private LocalDateTime endDate;
 
-    @OneToMany(mappedBy = "bet")
+    @OneToMany(mappedBy = "bet", cascade = CascadeType.ALL)
     private List<Option> options;
 
     @OneToOne

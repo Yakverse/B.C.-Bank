@@ -22,6 +22,6 @@ public class Option {
     @JoinColumn(name = "bet_id")
     private Bet bet;
 
-    @OneToMany(mappedBy = "option")
+    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL)
     private List<UserBet> user_bet;
 }

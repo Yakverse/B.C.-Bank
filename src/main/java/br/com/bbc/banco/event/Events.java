@@ -27,9 +27,6 @@ import java.util.*;
 public class Events extends ListenerAdapter {
 
     @Autowired
-    private Bets bets;
-
-    @Autowired
     private Jokenpos jokenpos;
 
     @Autowired
@@ -52,6 +49,24 @@ public class Events extends ListenerAdapter {
 
     @Autowired
     private DailyCommand dailyCommand;
+
+    @Autowired
+    private criarApostaCommand criarApostaCommand;
+
+    @Autowired
+    private ApostasCommand apostasCommand;
+
+    @Autowired
+    private ApostarCommand apostarCommand;
+
+    @Autowired
+    private ApostaCommand apostaCommand;
+
+    @Autowired
+    private FinalizarApostaCommand finalizarApostaCommand;
+
+    @Autowired
+    private CancelaAposta cancelaAposta;
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -89,23 +104,27 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "criaraposta":
-                event.replyEmbeds(bets.criarAposta(event.getUser(), event.getOption("nome").getAsString(), event.getOption("opcao1").getAsString(), event.getOption("opcao2").getAsString())).queue();
+                this.criarApostaCommand.execute(event);
                 break;
 
             case "apostas":
-                event.replyEmbeds(bets.apostas(event.getUser())).setEphemeral(true).queue();
+                this.apostasCommand.execute(event);
                 break;
 
             case "apostar":
-                event.replyEmbeds(bets.apostar(event.getUser(), event.getOption("id_aposta").getAsLong(), event.getOption("numero_opcao").getAsLong(), event.getOption("valor").getAsString())).setEphemeral(true).queue();
+                this.apostarCommand.execute(event);
                 break;
 
             case "aposta":
-                event.replyEmbeds(bets.aposta(event.getUser(), event.getOption("id_aposta").getAsLong())).setEphemeral(true).queue();
+                this.apostaCommand.execute(event);
                 break;
 
             case "finalizar":
-                event.replyEmbeds(bets.finalizaAposta(event.getUser(), event.getOption("id_aposta").getAsLong(), event.getOption("numero_opcao").getAsLong())).setEphemeral(true).queue();
+                this.finalizarApostaCommand.execute(event);
+                break;
+
+            case "cancelar":
+                this.cancelaAposta.execute(event);
                 break;
 
             case "jokenpo":
@@ -128,7 +147,6 @@ public class Events extends ListenerAdapter {
         String firstWord = args[0].substring(1);
 
         net.dv8tion.jda.api.entities.User author = event.getAuthor();
-        Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
 
         if(args[0].startsWith(BotEnumeration.PREFIX.getValue())) {
@@ -165,38 +183,35 @@ public class Events extends ListenerAdapter {
 
             //Criar Aposta
             if (firstWord.equalsIgnoreCase("criaraposta")){
-                if (args.length < 4) channel.sendMessage(Embeds.criarApostaEmbedError(author, 0x00000).build()).queue();
-                else {
-                    String nome = args[1];
-
-                    List<String> list = Arrays.asList(args);
-                    list = list.subList(2, args.length);
-
-                    String[] newarr = new String[list.size()];
-                    list.toArray(newarr);
-
-                    channel.sendMessage(bets.criarAposta(author, nome, newarr)).queue();
-                }
+                this.criarApostaCommand.execute(event);
             }
 
             //Apostas
             if (firstWord.equalsIgnoreCase("apostas")){
-                channel.sendMessage(bets.apostas(author)).queue();
+                this.apostasCommand.execute(event);
             }
 
             //Apostar
             if (firstWord.equalsIgnoreCase("apostar")){
-                channel.sendMessage(bets.apostar(author, Long.parseLong(args[1]), Long.parseLong(args[2]), args[3])).queue();
+                if (args.length < 4) throw new Exception();
+                this.apostarCommand.execute(event);
             }
 
             //Aposta
             if (firstWord.equalsIgnoreCase("aposta")){
-                channel.sendMessage(bets.aposta(author, Long.parseLong(args[1]))).queue();
+                if (args.length < 1) throw new Exception();
+                this.apostaCommand.execute(event);
             }
 
             //FinalizarAposta
             if (firstWord.equalsIgnoreCase("finalizar")){
-                channel.sendMessage(bets.finalizaAposta(author, Long.parseLong(args[1]), Long.parseLong(args[2]))).queue();
+                if (args.length < 3) throw new Exception();
+                this.finalizarApostaCommand.execute(event);
+            }
+
+            if (firstWord.equalsIgnoreCase("cancelar")){
+                if (args.length < 2) throw new Exception();
+                this.cancelaAposta.execute(event);
             }
 
         }

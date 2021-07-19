@@ -1,7 +1,6 @@
 package br.com.bbc.banco.command;
 
-import br.com.bbc.banco.service.TransactionService;
-import br.com.bbc.banco.service.UserService;
+import br.com.bbc.banco.service.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +21,15 @@ public abstract class Command {
 
     @Autowired
     protected TransactionService transactionService;
+
+    @Autowired
+    protected BetService betService;
+
+    @Autowired
+    protected OptionService optionService;
+
+    @Autowired
+    protected UserBetService userBetService;
 
     @Getter private final String name = null;
     @Getter private final String description = null;
