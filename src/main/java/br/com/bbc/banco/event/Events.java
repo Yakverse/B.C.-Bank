@@ -2,6 +2,7 @@ package br.com.bbc.banco.event;
 
 import br.com.bbc.banco.command.*;
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.ErrorEmbed;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.exception.SaldoInsuficienteException;
 import br.com.bbc.banco.exception.ValorInvalidoException;
@@ -116,7 +117,7 @@ public class Events extends ListenerAdapter {
                         ).queue();
                 break;
         }
-    };
+    }
 
     @SneakyThrows
     @Override
@@ -131,7 +132,7 @@ public class Events extends ListenerAdapter {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
 
-        if(args[0].startsWith(BotEnumeration.PREFIX.getValue())) {
+        if(args[0].startsWith(BotEnumeration.PREFIX.getText())) {
 
             if (firstWord.equalsIgnoreCase("extrato")) {
                 this.extratoCommand.execute(event);
@@ -165,7 +166,7 @@ public class Events extends ListenerAdapter {
 
             //Criar Aposta
             if (firstWord.equalsIgnoreCase("criaraposta")){
-                if (args.length < 4) channel.sendMessage(Embeds.criarApostaEmbedError(author, 0x00000).build()).queue();
+                if (args.length < 4) channel.sendMessage(new ErrorEmbed(author,"Informe pelo menos 2 opções!").build()).queue();
                 else {
                     String nome = args[1];
 
@@ -207,28 +208,26 @@ public class Events extends ListenerAdapter {
     public void onButtonClick(@NotNull ButtonClickEvent event){
         switch (event.getButton().getId()){
             case "aceitarJokenpo":
-                event.editMessageEmbeds(jokenpos.respostaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1],true,event.getMessage()))
+                event.editMessageEmbeds(jokenpos.aceitaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1]))
                     .setActionRow(
-                        Button.secondary("pedraJokenpo",Emoji.fromUnicode("U+270A")),
-                        Button.secondary("papelJokenpo",Emoji.fromUnicode("U+270B")),
-                        Button.secondary("tesouraJokenpo",Emoji.fromUnicode("U+270C"))
+                        Button.secondary("U+270A",Emoji.fromUnicode("U+270A")),
+                        Button.secondary("U+270B",Emoji.fromUnicode("U+270B")),
+                        Button.secondary("U+270C",Emoji.fromUnicode("U+270C"))
                     ).queue();
                 break;
             case "recusarJokenpo":
-                jokenpos.respostaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1],false, event.getMessage());
+                jokenpos.recusaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1], event.getMessage());
                 break;
 
-            case "pedraJokenpo":
-            case "papelJokenpo":
-            case "tesouraJokenpo":
-                MessageEmbed messageEmbed = jokenpos.escolheOpcao(event.getUser(),event.getButton().getId().split("Jokenpo")[0],event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1]);
+            case "U+270A":
+            case "U+270B":
+            case "U+270C":
+                long gameId = Long.parseLong(event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1]);
+                MessageEmbed messageEmbed = jokenpos.escolheOpcao(event.getUser(),event.getButton().getId(), gameId);
                 if(messageEmbed != null){
                     event.editMessageEmbeds(messageEmbed).setActionRow(
                             Button.danger("recusarJokenpo", Emoji.fromUnicode("U+2716"))
                     ).queue();
-                }
-                else{
-                    event.replyEmbeds(jokenpos.replyOption(event.getButton().getId())).setEphemeral(true).queue();
                 }
         }
     }

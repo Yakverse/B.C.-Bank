@@ -2,15 +2,17 @@ package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.configuration.BotApplication;
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.JokenpoEmbed;
+import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.enumeration.TransactionType;
-import br.com.bbc.banco.exception.PlayerErradoException;
-import br.com.bbc.banco.exception.ValorInvalidoException;
+import br.com.bbc.banco.exception.PlayerInvalidoException;
 import br.com.bbc.banco.model.Jokenpo;
 import br.com.bbc.banco.model.Transaction;
 import br.com.bbc.banco.model.User;
 import br.com.bbc.banco.service.JokenpoService;
 import br.com.bbc.banco.service.TransactionService;
 import br.com.bbc.banco.service.UserService;
+import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,10 @@ public class Jokenpos {
     private TransactionService transactionService;
 
 
-    public MessageEmbed jokenpo(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other, String valueString) throws ValorInvalidoException {
+    public MessageEmbed jokenpo(net.dv8tion.jda.api.entities.User author, net.dv8tion.jda.api.entities.User other, String valueString) throws Exception {
+        if(author.getIdLong() == other.getIdLong()) throw new PlayerInvalidoException();
+
+
         User player1 = userService.findOrCreateById(author.getIdLong());
         User player2 = userService.findOrCreateById(other.getIdLong());
         BigDecimal value = convertStringToBigDecimalReplacingComma(valueString);
@@ -45,43 +50,64 @@ public class Jokenpos {
 
         this.jokenpoService.create(jokenpo);
 
-        return Embeds.criarJokenpoEmbed(author,other,value, jokenpo.getId()).build();
+        Embeds embed = new JokenpoEmbed(other, jokenpo.getId());
+
+        String message = String.format("%s te desafiou!",author.getName());
+
+        String underMessage = String.format("Valor: %s %.2f",
+                BotEnumeration.CURRENCY.getText(),
+                value
+        );
+
+        embed.addField(message,underMessage);
+
+        return embed.build();
     }
 
 
-    public MessageEmbed respostaJokenpo(net.dv8tion.jda.api.entities.User author, String jokenpoId, boolean acepted, Message message) throws Exception {
+    public MessageEmbed aceitaJokenpo(net.dv8tion.jda.api.entities.User author, String jokenpoId) throws PlayerInvalidoException {
         Jokenpo jokenpo = this.jokenpoService.findById(Long.parseLong(jokenpoId));
 
-        if(jokenpo.getPlayer2Id() != author.getIdLong() && jokenpo.getPlayer1Id() != author.getIdLong()) throw new PlayerErradoException();
+        if(jokenpo.getPlayer2Id() != author.getIdLong()) throw new PlayerInvalidoException();
 
-        if(!acepted){
-            message.delete().queue();
-            return null;
-        }
-        return Embeds.criarJokenpoGameEmbed(jokenpo.getId()).build();
+        Embeds embed = new JokenpoEmbed(author, Long.parseLong(jokenpoId));
+        embed.addField("Escolha uma das opçoes abaixo","");
+        return embed.build();
+    }
+
+    public void recusaJokenpo(net.dv8tion.jda.api.entities.User author, String jokenpoId, Message message) throws PlayerInvalidoException {
+        Jokenpo jokenpo = this.jokenpoService.findById(Long.parseLong(jokenpoId));
+        if(jokenpo.getPlayer2Id() != author.getIdLong() && jokenpo.getPlayer1Id() != author.getIdLong()) throw new PlayerInvalidoException();
+        message.delete().queue();
     }
 
 
-    public MessageEmbed escolheOpcao(net.dv8tion.jda.api.entities.User author, String option, String jokenpoId) throws Exception {
-        Jokenpo jokenpo = this.jokenpoService.findById(Long.parseLong(jokenpoId));
-
-        if(jokenpo.getPlayer2Id() != author.getIdLong() && jokenpo.getPlayer1Id() != author.getIdLong()) throw new PlayerErradoException();
-        else if(jokenpo.getPlayer1Id() == author.getIdLong() && jokenpo.getPlayer1Pick() == null){
-            jokenpo.setPlayer1Pick(option);
 
 
-        }
-        else if(jokenpo.getPlayer2Pick() == null) jokenpo.setPlayer2Pick(option);
+
+    public MessageEmbed escolheOpcao(net.dv8tion.jda.api.entities.User author, String option, long jokenpoId) throws Exception {
+        Jokenpo jokenpo = this.jokenpoService.findById(jokenpoId);
+
+        if(jokenpo.getPlayer2Id() != author.getIdLong() && jokenpo.getPlayer1Id() != author.getIdLong()) throw new PlayerInvalidoException();
+        else if(jokenpo.getPlayer1Id() == author.getIdLong() && jokenpo.getPlayer1Pick() == null) jokenpo.setPlayer1Pick(option);
+        else if(jokenpo.getPlayer2Id() == author.getIdLong() && jokenpo.getPlayer2Pick() == null) jokenpo.setPlayer2Pick(option);
 
         jokenpoService.update(jokenpo);
 
         if(jokenpo.getPlayer1Pick() != null && jokenpo.getPlayer2Pick() != null){
 
             int winnerNumber = jokenpoWinner(jokenpo);
-            if(winnerNumber == 0) return Embeds.jokenpoEmpate(jokenpoId).build();
+
+            //Empate
+            if(winnerNumber == 0){
+                Embeds embed = new JokenpoEmbed(author,jokenpoId);
+                embed.addField("Empatou", String.format("Ambos escolheram %s", Emoji.fromUnicode(jokenpo.getPlayer1Pick())));
+                return embed.build();
+            }
+
+            //Separa Vencedor e Perdedor
             net.dv8tion.jda.api.entities.User winner;
             net.dv8tion.jda.api.entities.User loser;
-
 
             if (winnerNumber == 1){
                 winner = BotApplication.jda.retrieveUserById(jokenpo.getPlayer1Id()).complete();
@@ -95,13 +121,26 @@ public class Jokenpos {
             User userWinner = userService.findOrCreateById(winner.getIdLong());
             User userLoser = userService.findOrCreateById(loser.getIdLong());
 
+            //Faz a transferencia de dinheiro do Perdedor pro Ganhador
             userLoser.transferir(jokenpo.getValue(),userWinner);
             userService.update(userLoser);
             userService.update(userWinner);
 
-                transactionService.create(new Transaction(jokenpo.getValue(),userLoser,userWinner, TransactionType.JOKENPO));
+            transactionService.create(new Transaction(jokenpo.getValue(),userLoser,userWinner, TransactionType.JOKENPO));
 
-            return Embeds.jokenpoGanhador(winner, loser, jokenpoId).build();
+
+            //Cria o embed de retorno
+            Embeds embed = new JokenpoEmbed(winner,jokenpoId);
+
+            String message = String.format("%s Ganhou",
+                    winner.getName()
+            );
+            String messageAfter = String.format("mais sorte da proxima vez %s",
+                    loser.getName()
+            );
+            embed.addField(message,messageAfter);
+
+            return embed.build();
 
         }
 
@@ -120,16 +159,11 @@ public class Jokenpos {
             case "papel":
                 if(pick2.equals("tesoura")) return 2;
                 return 1;
-            default:
+            case "tesoura":
                 if(pick2.equals("pedra")) return 2;
                 return 1;
+            default:
+                throw new IllegalStateException("Unexpected value: " + pick1);
         }
     }
-
-
-    public MessageEmbed replyOption(String pick){
-        return Embeds.jokenpoReply(pick).build();
-    }
-
-
 }

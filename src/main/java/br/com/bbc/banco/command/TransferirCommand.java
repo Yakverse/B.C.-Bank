@@ -1,8 +1,10 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.ErrorEmbed;
+import br.com.bbc.banco.embed.SucessEmbed;
+import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.enumeration.TransactionType;
-import br.com.bbc.banco.exception.ContaJaExisteException;
 import br.com.bbc.banco.exception.SaldoInsuficienteException;
 import br.com.bbc.banco.exception.ValorInvalidoException;
 import br.com.bbc.banco.model.Transaction;
@@ -43,6 +45,7 @@ public class TransferirCommand extends Command {
     }
 
     private MessageEmbed process(net.dv8tion.jda.api.entities.User author, String valorString, net.dv8tion.jda.api.entities.User transferido) throws Exception{
+        MessageEmbed.Field field;
         try{
             if(author.getIdLong() == transferido.getIdLong()) throw new Exception();
             BigDecimal valor = GenericUtils.convertStringToBigDecimalReplacingComma(valorString);
@@ -51,16 +54,23 @@ public class TransferirCommand extends Command {
             user.transferir(valor, para);
             this.transactionService.update(new Transaction(valor, this.userService.update(user), this.userService.update(para), TransactionType.TRANFERENCIA));
             transferido.openPrivateChannel().queue(privateChannel -> {
-                privateChannel.sendMessage(Embeds.recebimentoDeTranferencia(author, valor).build()).queue();
+                privateChannel.sendMessage(new SucessEmbed(author,String.format("Você recebeu uma transferência de %s %.2f", BotEnumeration.CURRENCY.getText(), valor)).build()).queue();
             });
-            return Embeds.transferenciaRealizadaComSucesso(author, valor, transferido).build();
+            Embeds embed = new SucessEmbed(author);
+            embed.addField(
+                    "Transferência realizada com sucesso!",
+                    String.format("Você transferiu %s %.2f para %s", BotEnumeration.CURRENCY.getText(), valor, transferido.getName()));
+            return embed.build();
         } catch (SaldoInsuficienteException saldoInsuficienteException){
-            return Embeds.saldoInsuficiente(author).build();
+            field = Embeds.makeField("Saldo insuficiente!", "Digite /saldo para verificar seu saldo.");
         } catch (ValorInvalidoException valorInvalidoException){
-            return Embeds.valorInvalido(author).build();
+            field = Embeds.makeField("Valor inválido!", "O valor que você passou é inválido. Tente novamente com outro valor.");
         } catch (Exception e){
-            return Embeds.erroAoRelizarTransferencia(author).build();
+            field = Embeds.makeField("Houve um erro ao realizar essa transferência!", "Se o erro persistir, chame um administrador.");
         }
+        Embeds embed = new ErrorEmbed(author);
+        embed.addField(field);
+        return embed.build();
     }
 
 }

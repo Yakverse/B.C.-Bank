@@ -1,8 +1,8 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.model.User;
-import br.com.bbc.banco.service.UserService;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -31,19 +31,21 @@ public class SaldoCommand extends Command{
         User user = this.userService.findOrCreateById(author.getIdLong());
         BigDecimal saldo = user.getSaldo();
 
-        String mensagem = "";
-        int cor = 0x00000;
-        if (saldo.compareTo(BigDecimal.ZERO) > 0){
+        String subtitulo = String.format("%s %s", BotEnumeration.CURRENCY.getText(), user.getSaldo().toString());
+        String mensagem;
+        int cor;
+
+        if (saldo.compareTo(BigDecimal.ZERO) >= 0){
             mensagem = "Seu saldo está positivo!";
-            cor = 0x80b461;
-        } else if (saldo.compareTo(BigDecimal.ZERO) == 0){
-            mensagem = "Seu saldo está neutro";
-            cor = 0xd0a843;
+            cor = BotEnumeration.GREEN.getNumber();
         } else{
             mensagem = "Seu saldo está negativo!";
-            cor = 0x7f2927;
+            cor = BotEnumeration.RED.getNumber();
         }
 
-        return Embeds.saldoEmbed(author, user, mensagem, cor).build();
+        Embeds embed = new Embeds("💰 Saldo Atual 💰",cor,author);
+        embed.addField(subtitulo,mensagem);
+
+        return embed.build();
     }
 }

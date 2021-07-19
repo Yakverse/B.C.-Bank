@@ -33,7 +33,7 @@ public class ConviteCommand extends Command{
     }
 
     public net.dv8tion.jda.api.interactions.components.Component process() throws Exception{
-        return Button.link(String.format("%s", BotEnumeration.INVITE_LINK.getValue()), "Convite")
+        return Button.link(String.format("%s", BotEnumeration.INVITE_LINK.getText()), "Convite")
                 .withEmoji(Emoji.fromMarkdown("<:charlao_normal_icon:861075166553047060>"))
                 .withStyle(ButtonStyle.LINK);
     }

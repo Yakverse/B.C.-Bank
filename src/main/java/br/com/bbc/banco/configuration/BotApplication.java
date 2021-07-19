@@ -4,26 +4,15 @@ import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.event.Events;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Webhook;
-import net.dv8tion.jda.api.entities.WebhookClient;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
-import net.dv8tion.jda.api.utils.data.DataObject;
-import net.dv8tion.jda.internal.interactions.InteractionHookImpl;
-import net.dv8tion.jda.internal.interactions.InteractionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.security.auth.login.LoginException;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
@@ -38,7 +27,7 @@ public class BotApplication {
 
     @Bean
     public void initialize() throws LoginException {
-        jda = JDABuilder.createLight(BotEnumeration.TOKEN.getValue())
+        jda = JDABuilder.createLight(BotEnumeration.TOKEN.getText())
                 .setRawEventsEnabled(true)
                 .addEventListeners(events)
                 .setActivity(Activity.playing("o Charlão na cama"))

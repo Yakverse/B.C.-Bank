@@ -1,6 +1,8 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.ErrorEmbed;
+import br.com.bbc.banco.embed.SucessEmbed;
 import br.com.bbc.banco.exception.ContaJaExisteException;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -24,12 +26,17 @@ public class CriarCommand extends Command{
         event.getChannel().sendMessage(this.process(event.getAuthor())).queue();
     }
 
-    private MessageEmbed process(net.dv8tion.jda.api.entities.User author) throws Exception{
+    private MessageEmbed process(net.dv8tion.jda.api.entities.User author) {
+        Embeds embed;
         try{
             this.userService.create(new br.com.bbc.banco.model.User(author.getIdLong()));
-            return Embeds.contaCriadaComSucesso(author).build();
+            embed = new SucessEmbed(author);
+            embed.addField("Sua conta foi criada!", "Digite /saldo para verificar seu saldo.");
         } catch (ContaJaExisteException e){
-            return Embeds.contaJaExiste(author).build();
+            embed = new ErrorEmbed(author);
+            embed.addField("Sua conta já existe!", "Digite /saldo para verificar seu saldo.");
+
         }
+        return embed.build();
     }
 }

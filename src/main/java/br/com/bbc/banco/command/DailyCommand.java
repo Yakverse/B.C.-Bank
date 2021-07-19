@@ -1,6 +1,9 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.ErrorEmbed;
+import br.com.bbc.banco.embed.SucessEmbed;
+import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.model.User;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -40,7 +43,12 @@ public class DailyCommand extends Command {
             user.setUltimoDaily(LocalDateTime.now());
             this.userService.update(user);
 
-            return Embeds.dailyEmbed(author, user, valor, 0x00000).build();
+            Embeds embed = new SucessEmbed(author,"💰 Seu ganho do dia 💰");
+            embed.addField(
+                    String.format("%s %d", BotEnumeration.CURRENCY.getText(), valor),
+                    String.format("Saldo: %s %s", BotEnumeration.CURRENCY.getText(), user.getSaldo().toString())
+            );
+            return embed.build();
         }
         long dif = (user.getUltimoDaily().plusDays(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - System.currentTimeMillis()) / 1000;
 
@@ -48,6 +56,8 @@ public class DailyCommand extends Command {
         long minutos = (dif / 60) % 60;
         long horas = (dif / 3600);
 
-        return Embeds.dailyEmbedError(author, horas, minutos, segundos, 0x00000).build();
+        Embeds embed = new ErrorEmbed(author,"Indisponivel!");
+        embed.addField("Você ainda precisa esperar:", horas + "h " + minutos + "m " + segundos + "s");
+        return embed.build();
     }
 }
