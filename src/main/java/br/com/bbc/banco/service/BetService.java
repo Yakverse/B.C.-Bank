@@ -58,4 +58,8 @@ public class BetService {
     public void update(Bet bet){
         this.betRepository.save(bet);
     }
+
+    public void delete(Bet bet){
+        this.betRepository.delete(bet);
+    }
 }

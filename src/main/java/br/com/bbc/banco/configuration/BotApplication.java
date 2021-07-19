@@ -40,7 +40,7 @@ public class BotApplication {
                 new CommandData("criar", "Criar conta no BBC"),
                 new CommandData("saldo", "Mostra o seu saldo"),
                 new CommandData("daily", "Recompensa diária"),
-                new CommandData("apostas", "Mostra todas as apostas disponíveis."),
+                new CommandData("apostas", "Mostra todas as apostas disponíveis"),
                 new CommandData("extrato", "Mostra seu extrato"),
 
                 new CommandData("transferir", "Transfeir dinheiro")
@@ -71,6 +71,9 @@ public class BotApplication {
                             new OptionData(INTEGER, "id_aposta", "ID da aposta").setRequired(true),
                             new OptionData(INTEGER, "numero_opcao", "Número da opção na aposta").setRequired(true)
                     ),
+
+                new CommandData("cancelar", "Cancela uma aposta")
+                    .addOptions(new OptionData(INTEGER, "id_aposta", "ID da aposta").setRequired(true)),
 
                 new CommandData("jokenpo", "jokenpo")
                     .addOptions(
