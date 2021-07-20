@@ -1,9 +1,12 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.ErrorEmbed;
+import br.com.bbc.banco.embed.SucessEmbed;
 import br.com.bbc.banco.model.Bet;
 import br.com.bbc.banco.model.Option;
 import lombok.Getter;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -29,7 +32,10 @@ public class criarApostaCommand extends Command{
     public void execute(MessageReceivedEvent event) throws Exception{
         String[] args = event.getMessage().getContentRaw().split(" ");
 
-        if (args.length < 4) event.getChannel().sendMessage(Embeds.criarApostaEmbedError(event.getAuthor(), 0x00000).build()).queue();
+        if (args.length < 4){
+            Embeds embed = new ErrorEmbed(event.getAuthor(),"Informe pelo menos 2 opções!");
+            event.getChannel().sendMessage(embed.build()).queue();
+        }
         else {
             String nome = args[1];
 
@@ -61,6 +67,14 @@ public class criarApostaCommand extends Command{
             listOption.add(this.optionService.create(optionObj));
         }
 
-        return Embeds.criarApostaEmbed(author, bet, listOption, 0x00000).build();
+        String title = String.format("Aposta %s criada!", bet.getNome());
+        Embeds embed = new SucessEmbed(author,title);
+
+        for (Option option: listOption) {
+            embed.addField(String.format("[%d] %s", option.getNumber() + 1, option.getText()), "");
+        }
+        embed.addField("",String.format("ID da aposta: %d", bet.getId()));
+
+        return embed.build();
     }
 }

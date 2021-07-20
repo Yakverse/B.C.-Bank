@@ -1,6 +1,9 @@
 package br.com.bbc.banco.command;
 
+import br.com.bbc.banco.embed.DefaultEmbed;
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.ErrorEmbed;
+import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.model.Bet;
 import br.com.bbc.banco.model.Option;
 import br.com.bbc.banco.model.UserBet;
@@ -34,7 +37,11 @@ public class ApostaCommand extends Command {
 
     public MessageEmbed process(net.dv8tion.jda.api.entities.User author, long betId){
         Bet bet = this.betService.findById(betId);
-        if (bet == null) return Embeds.apostaEmbedErro(author, betId, 0x00000).build();
+        if (bet == null){
+            Embeds embed = new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!");
+            embed.addField("Use /apostas para ver as apostas ativas.", "");
+            return embed.build();
+        }
 
         List<Integer> listQnt = new ArrayList<Integer>(Collections.nCopies(bet.getOptions().size(), 0));
         List<BigDecimal> listTotal = new ArrayList<BigDecimal>(Collections.nCopies(bet.getOptions().size(), new BigDecimal(0)));
@@ -52,6 +59,14 @@ public class ApostaCommand extends Command {
             }
         }
 
-        return Embeds.apostaEmbed(author, bet, bet.getOptions(), totalBets, listQnt, listTotal, 0x00000).build();
+        Embeds embed = new DefaultEmbed(author,String.format("[%d] %s", bet.getId(), bet.getNome()));
+
+        for (Option option : bet.getOptions()) {
+            String message = String.format("[%d] %s:", option.getNumber() + 1, option.getText());
+            String afterMessage = String.format("%d%% - %s%.2f", Math.round(((double) listQnt.get(option.getNumber()) / totalBets) * 100), BotEnumeration.CURRENCY.getText(), listTotal.get(option.getNumber()));
+            embed.addField(message, afterMessage);
+        }
+
+        return embed.build();
     }
 }

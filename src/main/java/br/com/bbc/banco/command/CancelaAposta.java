@@ -1,6 +1,9 @@
 package br.com.bbc.banco.command;
 
+import br.com.bbc.banco.embed.DefaultEmbed;
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.ErrorEmbed;
+import br.com.bbc.banco.embed.SucessEmbed;
 import br.com.bbc.banco.model.Bet;
 import br.com.bbc.banco.model.Option;
 import br.com.bbc.banco.model.UserBet;
@@ -30,8 +33,12 @@ public class CancelaAposta extends Command{
 
     public MessageEmbed process(User author, long betId) throws Exception {
         Bet bet = this.betService.findById(betId);
-        if (bet == null) return Embeds.apostaEmbedErro(author, betId, 0x00000).build();
-        if (bet.getCreatedBy().getId() != author.getIdLong()) return Embeds.cancelarApostaEmbedErroAuthor(author, 0x00000).build();
+        if (bet == null){
+            Embeds embed = new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!");
+            embed.addField("Use /apostas para ver as apostas ativas.", "");
+            return embed.build();
+        }
+        if (bet.getCreatedBy().getId() != author.getIdLong()) return new ErrorEmbed(author,"Somente o criador da aposta pode finaliza-la.").build();
 
         for (Option option : bet.getOptions())
             for (UserBet userBet : option.getUser_bet()){
@@ -42,7 +49,7 @@ public class CancelaAposta extends Command{
 
         this.betService.delete(bet);
 
-        return Embeds.cancelarApostaEmbed(author, bet, 0x00000).build();
+        return new DefaultEmbed(author,String.format("Aposta [%d] %s cancelada.", bet.getId(), bet.getNome())).build();
     }
 
 }

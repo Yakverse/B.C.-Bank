@@ -1,6 +1,8 @@
 package br.com.bbc.banco.command;
 
+import br.com.bbc.banco.embed.DefaultEmbed;
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.ErrorEmbed;
 import br.com.bbc.banco.model.Bet;
 import br.com.bbc.banco.model.Option;
 import br.com.bbc.banco.model.User;
@@ -35,9 +37,13 @@ public class FinalizarApostaCommand extends Command{
 
     public MessageEmbed process(net.dv8tion.jda.api.entities.User author, long betId, long opcaoId) throws Exception {
         Bet bet = this.betService.findById(betId);
-        if (bet == null) return Embeds.apostaEmbedErro(author, betId, 0x00000).build();
-        if (bet.getCreatedBy().getId() != author.getIdLong()) return Embeds.apostaFinalizadaEmbedErroAuthor(author, 0x00000).build();
-        if (!bet.getIsOpen()) return Embeds.apostaFinalizadaEmbedErroFechada(author, bet, 0x00000).build();
+        if (bet == null){
+            Embeds embed = new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!");
+            embed.addField("Use /apostas para ver as apostas ativas.", "");
+            return embed.build();
+        }
+        if (bet.getCreatedBy().getId() != author.getIdLong()) return new ErrorEmbed(author,"Somente o criador da aposta pode finaliza-la.").build();
+        if (!bet.getIsOpen()) return new ErrorEmbed(author,String.format("[%d] %s já foi finalizada!", bet.getId(), bet.getNome())).build();
 
         bet.setEndDate(LocalDateTime.now());
         bet.setIsOpen(false);
@@ -58,9 +64,14 @@ public class FinalizarApostaCommand extends Command{
                 user.depositar(userBet.getValor().add(userBet.getValor().multiply(BigDecimal.valueOf(1 - ((double) userBetList.size() / totalBets)))));
                 this.userService.update(user);
             }
-            return Embeds.apostaFinalizadaEmbed(author, bet, optionWinner, 0x00000).build();
+
+            Embeds embed = new DefaultEmbed(author,String.format("[%d] %s", bet.getId(), bet.getNome()));
+            embed.addField(String.format("[%d] %s declarada vencedora!", optionWinner.getNumber() + 1, optionWinner.getText()), "");
+            return embed.build();
         }
 
-        return Embeds.apostaFinalizadaEmbedErroOpcao(author, opcaoId, 0x00000).build();
+        Embeds embed = new DefaultEmbed(author,String.format("Opcão [%d] não existe!", opcaoId));
+        embed.addField("Use /aposta ou $aposta para ver as opções.", "");
+        return embed.build();
     }
 }

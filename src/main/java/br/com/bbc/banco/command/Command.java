@@ -4,6 +4,7 @@ import br.com.bbc.banco.service.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -42,4 +43,9 @@ public abstract class Command {
     public void execute(MessageReceivedEvent event) throws Exception {
         log.error(String.format("O Comando %s da classe %s falhou ao ser executado!", StringUtils.capitalize(this.getName()), this.getClass().getSimpleName()));
     }
+
+    public void execute(ButtonClickEvent event) throws Exception{
+        log.error(String.format("A Interação de botão %s da classe %s falhou ao ser executado!", StringUtils.capitalize(this.getName()), this.getClass().getSimpleName()));
+    }
+
 }

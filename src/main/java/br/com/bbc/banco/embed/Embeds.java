@@ -1,19 +1,10 @@
 package br.com.bbc.banco.embed;
-
-import br.com.bbc.banco.configuration.BotApplication;
-import br.com.bbc.banco.enumeration.BotEnumeration;
-import br.com.bbc.banco.model.*;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-
-import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class Embeds {
+public abstract class Embeds {
 
     String title;
     int color;

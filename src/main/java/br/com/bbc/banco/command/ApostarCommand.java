@@ -1,6 +1,8 @@
 package br.com.bbc.banco.command;
 
+import br.com.bbc.banco.embed.DefaultEmbed;
 import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.ErrorEmbed;
 import br.com.bbc.banco.model.Bet;
 import br.com.bbc.banco.model.Option;
 import br.com.bbc.banco.model.User;
@@ -32,9 +34,16 @@ public class ApostarCommand extends Command{
 
     public MessageEmbed process(net.dv8tion.jda.api.entities.User author, long betId, long optionId, String valor) throws Exception {
         Bet bet = this.betService.findById(betId);
-        if (bet == null) return Embeds.apostarEmbedErroBet(author, 0x00000).build();
-        if (!bet.getIsOpen()) return Embeds.apostarEmbedErroFechada(author, bet, bet.getOptions(), 0x00000).build();
-
+        if (bet == null) return new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!").build();
+        if (!bet.getIsOpen()){
+            Embeds embed = new ErrorEmbed(author,String.format("%s já foi fechada!", bet.getNome()));
+            for (Option option : bet.getOptions()) {
+                if (option.isWinner()){
+                    embed.addField("A opção vencedora foi:", String.format("[%d] %s", option.getNumber(), option.getText()));
+                    return embed.build();
+                }
+            }
+        }
         User user = userService.findOrCreateById(author.getIdLong());
 
         for (Option option : bet.getOptions()) {
@@ -55,10 +64,18 @@ public class ApostarCommand extends Command{
                     this.userBetService.update(userBet);
                 }
 
-                return Embeds.apostarEmbed(author, bet, option, valor, 0x00000).build();
+                Embeds embed = new DefaultEmbed(author,"Aposta registrada!");
+                embed.addField(String.format("Aposta %s:", bet.getNome()), "");
+                embed.addField(String.format("Opção [%d] %s", option.getNumber() + 1, option.getText()), "");
+                return embed.build();
             }
         }
 
-        return Embeds.apostarEmbedErroOption(author, bet, optionId, 0x00000).build();
+        Embeds embed = new ErrorEmbed(author,"Opção %d não encontrada!");
+        embed.addField(String.format("Opções da aposta %s", bet.getNome()), "");
+        for (Option option : bet.getOptions()){
+            embed.addField(String.format("[%d] %s", option.getNumber() + 1, option.getText()), "");
+        }
+        return embed.build();
     }
 }

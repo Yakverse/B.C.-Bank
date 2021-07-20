@@ -8,4 +8,8 @@ public class DefaultEmbed extends Embeds{
         super(title, BotEnumeration.BLACK.getNumber(), client);
     }
 
+    public DefaultEmbed(net.dv8tion.jda.api.entities.User client,String title, int color) {
+        super(title, color, client);
+    }
+
 }

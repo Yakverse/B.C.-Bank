@@ -1,11 +1,7 @@
 package br.com.bbc.banco.event;
 
 import br.com.bbc.banco.command.*;
-import br.com.bbc.banco.embed.Embeds;
-import br.com.bbc.banco.embed.ErrorEmbed;
 import br.com.bbc.banco.enumeration.BotEnumeration;
-import br.com.bbc.banco.exception.SaldoInsuficienteException;
-import br.com.bbc.banco.exception.ValorInvalidoException;
 import br.com.bbc.banco.service.UserService;
 import br.com.bbc.banco.util.Extras;
 import lombok.SneakyThrows;
@@ -21,11 +17,21 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-
 @Component
 @Slf4j
 public class Events extends ListenerAdapter {
+
+    @Autowired
+    private AceitaJokenpoCommand aceitaJokenpoCommand;
+
+    @Autowired
+    private RecusaJokenpoCommand recusaJokenpoCommand;
+
+    @Autowired
+    private OpcaoJokenpoCommand opcaoJokenpoCommand;
+
+    @Autowired
+    private JokenpoCommand jokenpoCommand;
 
     @Autowired
     private Jokenpos jokenpos;
@@ -129,11 +135,7 @@ public class Events extends ListenerAdapter {
                 break;
 
             case "jokenpo":
-                event.replyEmbeds(jokenpos.jokenpo(event.getUser(),event.getOption("pessoa").getAsUser(), event.getOption("valor").getAsString()))
-                        .addActionRow(
-                            Button.primary("aceitarJokenpo", Emoji.fromUnicode("U+2714")),
-                            Button.danger("recusarJokenpo", Emoji.fromUnicode("U+2716"))
-                        ).queue();
+                this.jokenpoCommand.execute(event);
                 break;
         }
     }
@@ -223,27 +225,16 @@ public class Events extends ListenerAdapter {
     public void onButtonClick(@NotNull ButtonClickEvent event){
         switch (event.getButton().getId()){
             case "aceitarJokenpo":
-                event.editMessageEmbeds(jokenpos.aceitaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1]))
-                    .setActionRow(
-                        Button.secondary("U+270A",Emoji.fromUnicode("U+270A")),
-                        Button.secondary("U+270B",Emoji.fromUnicode("U+270B")),
-                        Button.secondary("U+270C",Emoji.fromUnicode("U+270C"))
-                    ).queue();
+                this.aceitaJokenpoCommand.execute(event);
                 break;
             case "recusarJokenpo":
-                jokenpos.recusaJokenpo(event.getUser(),event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1], event.getMessage());
+                this.recusaJokenpoCommand.execute(event);
                 break;
-
             case "U+270A":
             case "U+270B":
             case "U+270C":
-                long gameId = Long.parseLong(event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1]);
-                MessageEmbed messageEmbed = jokenpos.escolheOpcao(event.getUser(),event.getButton().getId(), gameId);
-                if(messageEmbed != null){
-                    event.editMessageEmbeds(messageEmbed).setActionRow(
-                            Button.danger("recusarJokenpo", Emoji.fromUnicode("U+2716"))
-                    ).queue();
-                }
+                this.opcaoJokenpoCommand.execute(event);
+                break;
         }
     }
 }

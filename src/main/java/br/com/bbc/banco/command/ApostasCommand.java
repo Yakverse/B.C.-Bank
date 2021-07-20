@@ -1,5 +1,6 @@
 package br.com.bbc.banco.command;
 
+import br.com.bbc.banco.embed.DefaultEmbed;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.model.Bet;
 import lombok.Getter;
@@ -28,8 +29,13 @@ public class ApostasCommand extends Command{
 
     public MessageEmbed process(net.dv8tion.jda.api.entities.User author){
         List<Bet> listBet = this.betService.findAll();
-        if (listBet == null || listBet.isEmpty()) return Embeds.semApostas(author, 0x00000).build();
-
-        return Embeds.apostasEmbed(author, 0x00000, listBet).build();
+        if (listBet == null || listBet.isEmpty()){
+            return new DefaultEmbed(author,"Nenhuma aposta ativa no momento.").build();
+        }
+        Embeds embed = new DefaultEmbed(author,"Apostas ativas no momento!");
+        for (Bet bet : listBet) {
+            embed.addField(String.format("[%d] %s", bet.getId(), bet.getNome()), "");
+        }
+        return embed.build();
     }
 }

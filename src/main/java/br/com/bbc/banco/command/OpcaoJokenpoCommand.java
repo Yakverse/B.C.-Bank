@@ -3,59 +3,37 @@ package br.com.bbc.banco.command;
 import br.com.bbc.banco.configuration.BotApplication;
 import br.com.bbc.banco.embed.Embeds;
 import br.com.bbc.banco.embed.JokenpoEmbed;
-import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.enumeration.TransactionType;
 import br.com.bbc.banco.exception.PlayerInvalidoException;
 import br.com.bbc.banco.model.Jokenpo;
 import br.com.bbc.banco.model.Transaction;
 import br.com.bbc.banco.model.User;
 import br.com.bbc.banco.service.JokenpoService;
-import br.com.bbc.banco.service.TransactionService;
-import br.com.bbc.banco.service.UserService;
+import lombok.extern.java.Log;
 import net.dv8tion.jda.api.entities.Emoji;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.interactions.components.Button;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
-import static br.com.bbc.banco.util.GenericUtils.convertStringToBigDecimalReplacingComma;
-
 @Component
-public class Jokenpos {
-
-    @Autowired
-    private UserService userService;
+public class OpcaoJokenpoCommand extends Command{
 
     @Autowired
     private JokenpoService jokenpoService;
 
-    @Autowired
-    private TransactionService transactionService;
-
-
-    public MessageEmbed aceitaJokenpo(net.dv8tion.jda.api.entities.User author, String jokenpoId) throws PlayerInvalidoException {
-        Jokenpo jokenpo = this.jokenpoService.findById(Long.parseLong(jokenpoId));
-
-        if(jokenpo.getPlayer2Id() != author.getIdLong()) throw new PlayerInvalidoException();
-
-        Embeds embed = new JokenpoEmbed(author, Long.parseLong(jokenpoId));
-        embed.addField("Escolha uma das opçoes abaixo","");
-        return embed.build();
+    @Override
+    public void execute(ButtonClickEvent event) throws Exception{
+        MessageEmbed message = this.process(event.getUser(), event.getButton().getId(), Long.parseLong(event.getMessage().getEmbeds().get(0).getFooter().getText().split("#")[1]));
+        if(message != null) {
+            event.editMessageEmbeds(message).setActionRow(
+                    Button.danger("recusarJokenpo", Emoji.fromUnicode("U+2716"))
+            ).queue();
+        }
     }
 
-    public void recusaJokenpo(net.dv8tion.jda.api.entities.User author, String jokenpoId, Message message) throws PlayerInvalidoException {
-        Jokenpo jokenpo = this.jokenpoService.findById(Long.parseLong(jokenpoId));
-        if(jokenpo.getPlayer2Id() != author.getIdLong() && jokenpo.getPlayer1Id() != author.getIdLong()) throw new PlayerInvalidoException();
-        message.delete().queue();
-    }
-
-
-
-
-
-    public MessageEmbed escolheOpcao(net.dv8tion.jda.api.entities.User author, String option, long jokenpoId) throws Exception {
+    public MessageEmbed process(net.dv8tion.jda.api.entities.User author, String option, Long jokenpoId) throws Exception{
         Jokenpo jokenpo = this.jokenpoService.findById(jokenpoId);
 
         if(jokenpo.getPlayer2Id() != author.getIdLong() && jokenpo.getPlayer1Id() != author.getIdLong()) throw new PlayerInvalidoException();
@@ -66,7 +44,7 @@ public class Jokenpos {
 
         if(jokenpo.getPlayer1Pick() != null && jokenpo.getPlayer2Pick() != null){
 
-            int winnerNumber = jokenpoWinner(jokenpo);
+            int winnerNumber = jokenpo.winner();
 
             //Empate
             if(winnerNumber == 0){
@@ -115,25 +93,5 @@ public class Jokenpos {
         }
 
         return null;
-    }
-
-    private int jokenpoWinner(Jokenpo jokenpo){
-        String pick1 = jokenpo.getPlayer1Pick();
-        String pick2 = jokenpo.getPlayer2Pick();
-
-        if(pick1.equals(pick2)) return 0;
-        switch (pick1){
-            case "U+270A":
-                if(pick2.equals("U+270B")) return 2;
-                return 1;
-            case "U+270B":
-                if(pick2.equals("U+270C")) return 2;
-                return 1;
-            case "U+270C":
-                if(pick2.equals("U+270A")) return 2;
-                return 1;
-            default:
-                throw new IllegalStateException("Unexpected value: " + pick1);
-        }
     }
 }
