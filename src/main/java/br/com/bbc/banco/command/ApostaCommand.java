@@ -11,18 +11,26 @@ import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @Component
 public class ApostaCommand extends Command {
 
     @Getter private final String name = "aposta";
     @Getter private final String description = "Descreve uma aposta";
+    @Getter private final List<OptionData> options = List.of(
+            new OptionData(INTEGER, "id_aposta", "ID da aposta").setRequired(true)
+    );
 
     @Override
     public void execute(SlashCommandEvent event) throws Exception{

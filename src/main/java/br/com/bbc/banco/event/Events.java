@@ -24,6 +24,9 @@ public class Events extends ListenerAdapter {
     @Autowired
     private CommandFactory commandFactory;
 
+    @Autowired
+    private JokenpoCommand jokenpoCommand;
+
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         GenericUtils.asciibbc();
@@ -75,6 +78,20 @@ public class Events extends ListenerAdapter {
     @SneakyThrows
     @Override
     public void onButtonClick(@NotNull ButtonClickEvent event){
-        this.commandFactory.factoryButton(event.getButton().getId()).execute(event);
+        switch (event.getButton().getId()){
+            case "aceitarJokenpo":
+                this.jokenpoCommand.aceitaJokenpo(event);
+                break;
+            case "recusarJokenpo":
+                this.jokenpoCommand.recusaJokenpo(event);
+                break;
+            case "U+270A":
+            case "U+270B":
+            case "U+270C":
+                this.jokenpoCommand.opcaoJokenpo(event);
+                break;
+            default:
+                throw new Exception();
+        }
     }
 }

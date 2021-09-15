@@ -32,6 +32,9 @@ public abstract class Command {
     @Autowired
     protected UserBetService userBetService;
 
+    @Autowired
+    protected JokenpoService jokenpoService;
+
     @Getter private final String name = null;
     @Getter private final String description = null;
     @Getter private final List<OptionData> options = new ArrayList<>();

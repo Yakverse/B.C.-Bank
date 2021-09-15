@@ -69,6 +69,11 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>5.5.3.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.12</version>
+		</dependency>
 
 	</dependencies>
 

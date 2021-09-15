@@ -45,15 +45,6 @@ public class CommandFactory {
     @Autowired
     private JokenpoCommand jokenpoCommand;
 
-    @Autowired
-    private AceitaJokenpoCommand aceitaJokenpoCommand;
-
-    @Autowired
-    private RecusaJokenpoCommand recusaJokenpoCommand;
-
-    @Autowired
-    private OpcaoJokenpoCommand opcaoJokenpoCommand;
-
     public Command factory(String command) throws Exception {
         switch (command){
             case "convite":
@@ -95,21 +86,6 @@ public class CommandFactory {
             case "jokenpo":
                 return this.jokenpoCommand;
 
-            default:
-                throw new Exception();
-        }
-    }
-
-    public Command factoryButton(String command) throws Exception {
-        switch (command){
-            case "aceitarJokenpo":
-                return aceitaJokenpoCommand;
-            case "recusarJokenpo":
-                return recusaJokenpoCommand;
-            case "U+270A":
-            case "U+270B":
-            case "U+270C":
-                return opcaoJokenpoCommand;
             default:
                 throw new Exception();
         }

@@ -9,15 +9,26 @@ import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
+import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 
 @Component
 public class ApostarCommand extends Command{
 
     @Getter private final String name = "apostar";
     @Getter private final String description = "Aposta em uma opção";
+    @Getter private final List<OptionData> options = Arrays.asList(
+            new OptionData(INTEGER, "id_aposta", "ID da aposta").setRequired(true),
+            new OptionData(INTEGER, "numero_opcao", "Número da opção na aposta").setRequired(true),
+            new OptionData(STRING, "valor", "Valor que vai ser apostado na opção").setRequired(true)
+    );
 
     @Override
     public void execute(SlashCommandEvent event) throws Exception{
