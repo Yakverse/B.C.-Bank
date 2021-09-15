@@ -1,7 +1,7 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.DefaultEmbed;
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.ErrorEmbed;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.model.Bet;
@@ -38,7 +38,7 @@ public class ApostaCommand extends Command {
     public MessageEmbed process(net.dv8tion.jda.api.entities.User author, long betId){
         Bet bet = this.betService.findById(betId);
         if (bet == null){
-            Embeds embed = new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!");
+            Embed embed = new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!");
             embed.addField("Use /apostas para ver as apostas ativas.", "");
             return embed.build();
         }
@@ -59,7 +59,7 @@ public class ApostaCommand extends Command {
             }
         }
 
-        Embeds embed = new DefaultEmbed(author,String.format("[%d] %s", bet.getId(), bet.getNome()));
+        Embed embed = new DefaultEmbed(author,String.format("[%d] %s", bet.getId(), bet.getNome()));
 
         for (Option option : bet.getOptions()) {
             String message = String.format("[%d] %s:", option.getNumber() + 1, option.getText());

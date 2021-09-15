@@ -2,12 +2,11 @@ package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.configuration.BotApplication;
 import br.com.bbc.banco.embed.DefaultEmbed;
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.model.Transaction;
 import br.com.bbc.banco.model.User;
 import lombok.Getter;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -40,8 +39,8 @@ public class ExtratoCommand extends Command {
         return embedBuild(author, user, transactions).build();
     }
 
-    private Embeds embedBuild(net.dv8tion.jda.api.entities.User author, User user, List<Transaction> transactions){
-        Embeds embed = new DefaultEmbed(author,"💰 Extrato 💰");
+    private Embed embedBuild(net.dv8tion.jda.api.entities.User author, User user, List<Transaction> transactions){
+        Embed embed = new DefaultEmbed(author,"💰 Extrato 💰");
 
         String beforeMessage;
         String message;

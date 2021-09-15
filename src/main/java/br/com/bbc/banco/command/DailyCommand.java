@@ -1,6 +1,6 @@
 package br.com.bbc.banco.command;
 
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.ErrorEmbed;
 import br.com.bbc.banco.embed.SucessEmbed;
 import br.com.bbc.banco.enumeration.BotEnumeration;
@@ -43,7 +43,7 @@ public class DailyCommand extends Command {
             user.setUltimoDaily(LocalDateTime.now());
             this.userService.update(user);
 
-            Embeds embed = new SucessEmbed(author,"💰 Seu ganho do dia 💰");
+            Embed embed = new SucessEmbed(author,"💰 Seu ganho do dia 💰");
             embed.addField(
                     String.format("%s %d", BotEnumeration.CURRENCY.getText(), valor),
                     String.format("Saldo: %s %s", BotEnumeration.CURRENCY.getText(), user.getSaldo().toString())
@@ -56,7 +56,7 @@ public class DailyCommand extends Command {
         long minutos = (dif / 60) % 60;
         long horas = (dif / 3600);
 
-        Embeds embed = new ErrorEmbed(author,"Indisponivel!");
+        Embed embed = new ErrorEmbed(author,"Indisponivel!");
         embed.addField("Você ainda precisa esperar:", horas + "h " + minutos + "m " + segundos + "s");
         return embed.build();
     }

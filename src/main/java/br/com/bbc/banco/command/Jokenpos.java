@@ -1,9 +1,8 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.configuration.BotApplication;
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.JokenpoEmbed;
-import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.enumeration.TransactionType;
 import br.com.bbc.banco.exception.PlayerInvalidoException;
 import br.com.bbc.banco.model.Jokenpo;
@@ -17,10 +16,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-
-import static br.com.bbc.banco.util.GenericUtils.convertStringToBigDecimalReplacingComma;
 
 @Component
 public class Jokenpos {
@@ -40,7 +35,7 @@ public class Jokenpos {
 
         if(jokenpo.getPlayer2Id() != author.getIdLong()) throw new PlayerInvalidoException();
 
-        Embeds embed = new JokenpoEmbed(author, Long.parseLong(jokenpoId));
+        Embed embed = new JokenpoEmbed(author, Long.parseLong(jokenpoId));
         embed.addField("Escolha uma das opçoes abaixo","");
         return embed.build();
     }
@@ -70,7 +65,7 @@ public class Jokenpos {
 
             //Empate
             if(winnerNumber == 0){
-                Embeds embed = new JokenpoEmbed(author,jokenpoId);
+                Embed embed = new JokenpoEmbed(author,jokenpoId);
                 embed.addField("Empatou", String.format("Ambos escolheram %s", Emoji.fromUnicode(jokenpo.getPlayer1Pick())));
                 return embed.build();
             }
@@ -100,7 +95,7 @@ public class Jokenpos {
 
 
             //Cria o embed de retorno
-            Embeds embed = new JokenpoEmbed(winner,jokenpoId);
+            Embed embed = new JokenpoEmbed(winner,jokenpoId);
 
             String message = String.format("%s Ganhou",
                     winner.getName()

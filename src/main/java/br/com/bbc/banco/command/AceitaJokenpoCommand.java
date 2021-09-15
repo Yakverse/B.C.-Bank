@@ -1,6 +1,6 @@
 package br.com.bbc.banco.command;
 
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.JokenpoEmbed;
 import br.com.bbc.banco.exception.PlayerInvalidoException;
 import br.com.bbc.banco.model.Jokenpo;
@@ -33,7 +33,7 @@ public class AceitaJokenpoCommand extends Command{
         Jokenpo jokenpo = this.jokenpoService.findById(Long.parseLong(jokenpoId));
         if(jokenpo.getPlayer2Id() != author.getIdLong()) throw new PlayerInvalidoException();
 
-        Embeds embed = new JokenpoEmbed(author, Long.parseLong(jokenpoId));
+        Embed embed = new JokenpoEmbed(author, Long.parseLong(jokenpoId));
         embed.addField("Escolha uma das opçoes abaixo","");
         return embed.build();
     }

@@ -1,9 +1,8 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.DefaultEmbed;
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.ErrorEmbed;
-import br.com.bbc.banco.embed.SucessEmbed;
 import br.com.bbc.banco.model.Bet;
 import br.com.bbc.banco.model.Option;
 import br.com.bbc.banco.model.UserBet;
@@ -34,7 +33,7 @@ public class CancelaAposta extends Command{
     public MessageEmbed process(User author, long betId) throws Exception {
         Bet bet = this.betService.findById(betId);
         if (bet == null){
-            Embeds embed = new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!");
+            Embed embed = new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!");
             embed.addField("Use /apostas para ver as apostas ativas.", "");
             return embed.build();
         }

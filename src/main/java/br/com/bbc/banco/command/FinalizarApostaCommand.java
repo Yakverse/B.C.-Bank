@@ -1,7 +1,7 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.DefaultEmbed;
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.ErrorEmbed;
 import br.com.bbc.banco.model.Bet;
 import br.com.bbc.banco.model.Option;
@@ -38,7 +38,7 @@ public class FinalizarApostaCommand extends Command{
     public MessageEmbed process(net.dv8tion.jda.api.entities.User author, long betId, long opcaoId) throws Exception {
         Bet bet = this.betService.findById(betId);
         if (bet == null){
-            Embeds embed = new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!");
+            Embed embed = new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!");
             embed.addField("Use /apostas para ver as apostas ativas.", "");
             return embed.build();
         }
@@ -65,12 +65,12 @@ public class FinalizarApostaCommand extends Command{
                 this.userService.update(user);
             }
 
-            Embeds embed = new DefaultEmbed(author,String.format("[%d] %s", bet.getId(), bet.getNome()));
+            Embed embed = new DefaultEmbed(author,String.format("[%d] %s", bet.getId(), bet.getNome()));
             embed.addField(String.format("[%d] %s declarada vencedora!", optionWinner.getNumber() + 1, optionWinner.getText()), "");
             return embed.build();
         }
 
-        Embeds embed = new DefaultEmbed(author,String.format("Opcão [%d] não existe!", opcaoId));
+        Embed embed = new DefaultEmbed(author,String.format("Opcão [%d] não existe!", opcaoId));
         embed.addField("Use /aposta ou $aposta para ver as opções.", "");
         return embed.build();
     }

@@ -1,7 +1,7 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.DefaultEmbed;
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.model.User;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class SaldoCommand extends Command{
             cor = BotEnumeration.RED.getNumber();
         }
 
-        Embeds embed = new DefaultEmbed(author,"💰 Saldo Atual 💰",cor);
+        Embed embed = new DefaultEmbed(author,"💰 Saldo Atual 💰",cor);
         embed.addField(subtitulo,mensagem);
 
         return embed.build();

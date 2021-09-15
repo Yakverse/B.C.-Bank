@@ -1,12 +1,10 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.DefaultEmbed;
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.ErrorEmbed;
-import br.com.bbc.banco.model.Bet;
-import br.com.bbc.banco.model.Option;
-import br.com.bbc.banco.model.User;
-import br.com.bbc.banco.model.UserBet;
+import br.com.bbc.banco.enumeration.TransactionType;
+import br.com.bbc.banco.model.*;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -36,7 +34,7 @@ public class ApostarCommand extends Command{
         Bet bet = this.betService.findById(betId);
         if (bet == null) return new ErrorEmbed(author,"Não foi encontrada nenhuma aposta ativa com esse ID!").build();
         if (!bet.getIsOpen()){
-            Embeds embed = new ErrorEmbed(author,String.format("%s já foi fechada!", bet.getNome()));
+            Embed embed = new ErrorEmbed(author,String.format("%s já foi fechada!", bet.getNome()));
             for (Option option : bet.getOptions()) {
                 if (option.isWinner()){
                     embed.addField("A opção vencedora foi:", String.format("[%d] %s", option.getNumber(), option.getText()));
@@ -64,14 +62,14 @@ public class ApostarCommand extends Command{
                     this.userBetService.update(userBet);
                 }
 
-                Embeds embed = new DefaultEmbed(author,"Aposta registrada!");
+                Embed embed = new DefaultEmbed(author,"Aposta registrada!");
                 embed.addField(String.format("Aposta %s:", bet.getNome()), "");
                 embed.addField(String.format("Opção [%d] %s", option.getNumber() + 1, option.getText()), "");
                 return embed.build();
             }
         }
 
-        Embeds embed = new ErrorEmbed(author,"Opção %d não encontrada!");
+        Embed embed = new ErrorEmbed(author,"Opção %d não encontrada!");
         embed.addField(String.format("Opções da aposta %s", bet.getNome()), "");
         for (Option option : bet.getOptions()){
             embed.addField(String.format("[%d] %s", option.getNumber() + 1, option.getText()), "");

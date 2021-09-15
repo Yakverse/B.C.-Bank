@@ -1,7 +1,7 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.configuration.BotApplication;
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.JokenpoEmbed;
 import br.com.bbc.banco.enumeration.TransactionType;
 import br.com.bbc.banco.exception.PlayerInvalidoException;
@@ -9,7 +9,6 @@ import br.com.bbc.banco.model.Jokenpo;
 import br.com.bbc.banco.model.Transaction;
 import br.com.bbc.banco.model.User;
 import br.com.bbc.banco.service.JokenpoService;
-import lombok.extern.java.Log;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
@@ -48,7 +47,7 @@ public class OpcaoJokenpoCommand extends Command{
 
             //Empate
             if(winnerNumber == 0){
-                Embeds embed = new JokenpoEmbed(author,jokenpoId);
+                Embed embed = new JokenpoEmbed(author,jokenpoId);
                 embed.addField("Empatou", String.format("Ambos escolheram %s", Emoji.fromUnicode(jokenpo.getPlayer1Pick())));
                 return embed.build();
             }
@@ -78,7 +77,7 @@ public class OpcaoJokenpoCommand extends Command{
 
 
             //Cria o embed de retorno
-            Embeds embed = new JokenpoEmbed(winner,jokenpoId);
+            Embed embed = new JokenpoEmbed(winner,jokenpoId);
 
             String message = String.format("%s Ganhou",
                     winner.getName()

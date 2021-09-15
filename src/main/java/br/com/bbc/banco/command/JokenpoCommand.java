@@ -1,6 +1,6 @@
 package br.com.bbc.banco.command;
 
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.JokenpoEmbed;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.exception.PlayerInvalidoException;
@@ -52,7 +52,7 @@ public class JokenpoCommand extends Command{
 
         this.jokenpoService.create(jokenpo);
 
-        Embeds embed = new JokenpoEmbed(other, jokenpo.getId());
+        Embed embed = new JokenpoEmbed(other, jokenpo.getId());
 
         String message = String.format("%s te desafiou!",author.getName());
 

@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
-public class JokenpoEmbed extends Embeds{
+public class JokenpoEmbed extends Embed {
     long gameId;
 
     public JokenpoEmbed(net.dv8tion.jda.api.entities.User client , long gameId){

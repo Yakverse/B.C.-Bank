@@ -1,6 +1,6 @@
 package br.com.bbc.banco.command;
 
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.ErrorEmbed;
 import br.com.bbc.banco.embed.SucessEmbed;
 import br.com.bbc.banco.exception.ContaJaExisteException;
@@ -27,7 +27,7 @@ public class CriarCommand extends Command{
     }
 
     private MessageEmbed process(net.dv8tion.jda.api.entities.User author) {
-        Embeds embed;
+        Embed embed;
         try{
             this.userService.create(new br.com.bbc.banco.model.User(author.getIdLong()));
             embed = new SucessEmbed(author);

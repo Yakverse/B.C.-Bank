@@ -2,7 +2,7 @@ package br.com.bbc.banco.embed;
 
 import br.com.bbc.banco.enumeration.BotEnumeration;
 
-public class SucessEmbed extends Embeds{
+public class SucessEmbed extends Embed {
 
     public SucessEmbed(net.dv8tion.jda.api.entities.User client){
         super("Sucesso!",BotEnumeration.GREEN.getNumber(), client);

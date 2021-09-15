@@ -4,27 +4,27 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Embeds {
+public abstract class Embed {
 
     String title;
     int color;
     List<MessageEmbed.Field> fields = new ArrayList<>();
     net.dv8tion.jda.api.entities.User client;
 
-    public Embeds(String title, int color, net.dv8tion.jda.api.entities.User client){
+    public Embed(String title, int color, net.dv8tion.jda.api.entities.User client){
         this.title = title;
         this.color = color;
         this.client = client;
     }
 
-    public Embeds(String title, int color, net.dv8tion.jda.api.entities.User client, MessageEmbed.Field field){
+    public Embed(String title, int color, net.dv8tion.jda.api.entities.User client, MessageEmbed.Field field){
         this.title = title;
         this.color = color;
         this.client = client;
         this.fields.add(field);
     }
 
-    public Embeds(String title, int color, net.dv8tion.jda.api.entities.User client, List<MessageEmbed.Field> fields){
+    public Embed(String title, int color, net.dv8tion.jda.api.entities.User client, List<MessageEmbed.Field> fields){
         this.title = title;
         this.color = color;
         this.client = client;

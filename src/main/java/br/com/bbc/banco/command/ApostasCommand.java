@@ -1,7 +1,7 @@
 package br.com.bbc.banco.command;
 
 import br.com.bbc.banco.embed.DefaultEmbed;
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.model.Bet;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -32,7 +32,7 @@ public class ApostasCommand extends Command{
         if (listBet == null || listBet.isEmpty()){
             return new DefaultEmbed(author,"Nenhuma aposta ativa no momento.").build();
         }
-        Embeds embed = new DefaultEmbed(author,"Apostas ativas no momento!");
+        Embed embed = new DefaultEmbed(author,"Apostas ativas no momento!");
         for (Bet bet : listBet) {
             embed.addField(String.format("[%d] %s", bet.getId(), bet.getNome()), "");
         }

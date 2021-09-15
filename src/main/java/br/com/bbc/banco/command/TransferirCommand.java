@@ -1,6 +1,6 @@
 package br.com.bbc.banco.command;
 
-import br.com.bbc.banco.embed.Embeds;
+import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.ErrorEmbed;
 import br.com.bbc.banco.embed.SucessEmbed;
 import br.com.bbc.banco.enumeration.BotEnumeration;
@@ -56,19 +56,19 @@ public class TransferirCommand extends Command {
             transferido.openPrivateChannel().queue(privateChannel -> {
                 privateChannel.sendMessage(new SucessEmbed(author,String.format("Você recebeu uma transferência de %s %.2f", BotEnumeration.CURRENCY.getText(), valor)).build()).queue();
             });
-            Embeds embed = new SucessEmbed(author);
+            Embed embed = new SucessEmbed(author);
             embed.addField(
                     "Transferência realizada com sucesso!",
                     String.format("Você transferiu %s %.2f para %s", BotEnumeration.CURRENCY.getText(), valor, transferido.getName()));
             return embed.build();
         } catch (SaldoInsuficienteException saldoInsuficienteException){
-            field = Embeds.makeField("Saldo insuficiente!", "Digite /saldo para verificar seu saldo.");
+            field = Embed.makeField("Saldo insuficiente!", "Digite /saldo para verificar seu saldo.");
         } catch (ValorInvalidoException valorInvalidoException){
-            field = Embeds.makeField("Valor inválido!", "O valor que você passou é inválido. Tente novamente com outro valor.");
+            field = Embed.makeField("Valor inválido!", "O valor que você passou é inválido. Tente novamente com outro valor.");
         } catch (Exception e){
-            field = Embeds.makeField("Houve um erro ao realizar essa transferência!", "Se o erro persistir, chame um administrador.");
+            field = Embed.makeField("Houve um erro ao realizar essa transferência!", "Se o erro persistir, chame um administrador.");
         }
-        Embeds embed = new ErrorEmbed(author);
+        Embed embed = new ErrorEmbed(author);
         embed.addField(field);
         return embed.build();
     }
