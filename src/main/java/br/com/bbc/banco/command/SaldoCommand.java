@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 public class SaldoCommand extends Command{
 
     @Getter private final String name = "saldo";
-    @Getter private final String description = "Mostra o seu saldo";
+    @Getter private final String description = "Mostra o seu saldo atual";
 
     @Override
     public void execute(SlashCommandEvent event) throws Exception{
