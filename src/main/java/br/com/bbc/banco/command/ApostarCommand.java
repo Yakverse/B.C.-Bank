@@ -1,10 +1,14 @@
 package br.com.bbc.banco.command;
 
+import br.com.bbc.banco.configuration.BotApplication;
 import br.com.bbc.banco.embed.DefaultEmbed;
 import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.ErrorEmbed;
+import br.com.bbc.banco.embed.SucessEmbed;
+import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.enumeration.TransactionType;
 import br.com.bbc.banco.model.*;
+import br.com.bbc.banco.util.GenericUtils;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -57,8 +61,11 @@ public class ApostarCommand extends Command{
 
         for (Option option : bet.getOptions()) {
             if ((option.getNumber() + 1) == optionId){
-                user.sacar(new BigDecimal(valor));
+                BigDecimal valorBigDecimal = GenericUtils.convertStringToBigDecimalReplacingComma(valor);
+                user.sacar(valorBigDecimal);
                 this.userService.update(user);
+                User bot = this.userService.findOrCreateById(BotApplication.jda.getSelfUser().getIdLong());
+                this.transactionService.update(new Transaction(valorBigDecimal, this.userService.update(user), bot, TransactionType.APOSTA));
 
                 UserBet userBet = this.userBetService.findByOption_idAndUser_id(option.getId(), user.getId());
 

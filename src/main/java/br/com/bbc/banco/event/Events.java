@@ -5,27 +5,25 @@ import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.util.GenericUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Locale;
 
 @Component
 @Slf4j
 public class Events extends ListenerAdapter {
 
-    @Autowired
-    private CommandFactory commandFactory;
+    private final CommandFactory commandFactory;
+    private final JokenpoCommand jokenpoCommand;
 
-    @Autowired
-    private JokenpoCommand jokenpoCommand;
+    public Events(CommandFactory commandFactory, JokenpoCommand jokenpoCommand) {
+        this.commandFactory = commandFactory;
+        this.jokenpoCommand = jokenpoCommand;
+    }
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {

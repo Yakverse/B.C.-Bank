@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class JokenpoService {
 
-    @Autowired
-    private JokenpoRepository jokenpoRepository;
+    private final JokenpoRepository jokenpoRepository;
+
+    public JokenpoService(JokenpoRepository jokenpoRepository) {
+        this.jokenpoRepository = jokenpoRepository;
+    }
 
     public Jokenpo create(Jokenpo jokenpo) {
         return this.jokenpoRepository.save(jokenpo);

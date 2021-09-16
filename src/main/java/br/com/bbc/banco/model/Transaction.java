@@ -1,15 +1,18 @@
 package br.com.bbc.banco.model;
 
 import br.com.bbc.banco.enumeration.TransactionType;
-import lombok.*;
-import org.apache.tomcat.jni.Local;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "transactions")
 public class Transaction {
@@ -30,11 +33,9 @@ public class Transaction {
     @JoinColumn(name = "origin_user_id")
     private User originUser;
 
-    public Transaction(){}
-
-    public Transaction(BigDecimal valor, User user, User para, TransactionType type){
+    public Transaction(BigDecimal valor, User de, User para, TransactionType type){
         this.valor = valor;
-        this.originUser = user;
+        this.originUser = de;
         this.user = para;
         this.type = type;
     }

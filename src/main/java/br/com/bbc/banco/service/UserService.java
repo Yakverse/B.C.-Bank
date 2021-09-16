@@ -14,23 +14,25 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Transactional()
     public User create(User user) throws ContaJaExisteException {
         if (this.findById(user.getId()) != null){
             throw new ContaJaExisteException();
         }
-        User newUser = this.userRepository.save(user);
-        Optional.of(newUser).ifPresent(u -> Hibernate.initialize(u.getTransactions()));
-        return newUser;
+        //        Optional.of(newUser).ifPresent(u -> Hibernate.initialize(u.getTransactions()));
+        return this.userRepository.save(user);
     }
 
     @Transactional()
     public User findById(Long id){
         Optional<User> user = this.userRepository.findById(id);
-        user.ifPresent(u -> Hibernate.initialize(u.getTransactions()));
+//        user.ifPresent(u -> Hibernate.initialize(u.getTransactions()));
         return user.orElse(null);
     }
 

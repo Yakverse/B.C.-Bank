@@ -1,12 +1,13 @@
 package br.com.bbc.banco.command;
 
+import br.com.bbc.banco.configuration.BotApplication;
 import br.com.bbc.banco.embed.DefaultEmbed;
 import br.com.bbc.banco.embed.Embed;
 import br.com.bbc.banco.embed.ErrorEmbed;
-import br.com.bbc.banco.model.Bet;
-import br.com.bbc.banco.model.Option;
-import br.com.bbc.banco.model.User;
-import br.com.bbc.banco.model.UserBet;
+import br.com.bbc.banco.embed.SucessEmbed;
+import br.com.bbc.banco.enumeration.BotEnumeration;
+import br.com.bbc.banco.enumeration.TransactionType;
+import br.com.bbc.banco.model.*;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -67,9 +68,15 @@ public class FinalizarApostaCommand extends Command{
             optionWinner.setWinner(true);
             List<UserBet> userBetList = optionWinner.getUser_bet();
             for (UserBet userBet : userBetList){
+                User bot = this.userService.findOrCreateById(BotApplication.jda.getSelfUser().getIdLong());
                 User user = userBet.getUser();
-                user.depositar(userBet.getValor().add(userBet.getValor().multiply(BigDecimal.valueOf(1 - ((double) userBetList.size() / totalBets)))));
+                BigDecimal valor = userBet.getValor().add(userBet.getValor().multiply(BigDecimal.valueOf(1 - ((double) userBetList.size() / totalBets))));
+                user.depositar(valor);
                 this.userService.update(user);
+                this.transactionService.update(new Transaction(valor, bot, this.userService.update(user), TransactionType.APOSTA));
+                author.openPrivateChannel().queue(privateChannel -> {
+                    privateChannel.sendMessage(new SucessEmbed(author,String.format("Você recebeu uma transferência de %s %.2f", BotEnumeration.CURRENCY.getText(), valor)).build()).queue();
+                });
             }
 
             Embed embed = new DefaultEmbed(author,String.format("[%d] %s", bet.getId(), bet.getNome()));

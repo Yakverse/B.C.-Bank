@@ -6,44 +6,36 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommandFactory {
 
-    @Autowired
-    private CriarCommand criarCommand;
+    private final CriarCommand criarCommand;
+    private final SaldoCommand saldoCommand;
+    private final ConviteCommand conviteCommand;
+    private final TransferirCommand transferirCommand;
+    private final ExtratoCommand extratoCommand;
+    private final DailyCommand dailyCommand;
+    private final CriarApostaCommand criarApostaCommand;
+    private final ApostasCommand apostasCommand;
+    private final ApostarCommand apostarCommand;
+    private final ApostaCommand apostaCommand;
+    private final FinalizarApostaCommand finalizarApostaCommand;
+    private final CancelaAposta cancelaAposta;
+    private final JokenpoCommand jokenpoCommand;
 
-    @Autowired
-    private SaldoCommand saldoCommand;
+    public CommandFactory(CriarApostaCommand criarApostaCommand, CriarCommand criarCommand, SaldoCommand saldoCommand, ConviteCommand conviteCommand, TransferirCommand transferirCommand, CancelaAposta cancelaAposta, ExtratoCommand extratoCommand, DailyCommand dailyCommand, JokenpoCommand jokenpoCommand, ApostasCommand apostasCommand, ApostarCommand apostarCommand, ApostaCommand apostaCommand, FinalizarApostaCommand finalizarApostaCommand) {
+        this.criarApostaCommand = criarApostaCommand;
+        this.criarCommand = criarCommand;
+        this.saldoCommand = saldoCommand;
+        this.conviteCommand = conviteCommand;
+        this.transferirCommand = transferirCommand;
+        this.cancelaAposta = cancelaAposta;
+        this.extratoCommand = extratoCommand;
+        this.dailyCommand = dailyCommand;
+        this.jokenpoCommand = jokenpoCommand;
+        this.apostasCommand = apostasCommand;
+        this.apostarCommand = apostarCommand;
+        this.apostaCommand = apostaCommand;
+        this.finalizarApostaCommand = finalizarApostaCommand;
+    }
 
-    @Autowired
-    private ConviteCommand conviteCommand;
-
-    @Autowired
-    private TransferirCommand transferirCommand;
-
-    @Autowired
-    private ExtratoCommand extratoCommand;
-
-    @Autowired
-    private DailyCommand dailyCommand;
-
-    @Autowired
-    private CriarApostaCommand criarApostaCommand;
-
-    @Autowired
-    private ApostasCommand apostasCommand;
-
-    @Autowired
-    private ApostarCommand apostarCommand;
-
-    @Autowired
-    private ApostaCommand apostaCommand;
-
-    @Autowired
-    private FinalizarApostaCommand finalizarApostaCommand;
-
-    @Autowired
-    private CancelaAposta cancelaAposta;
-
-    @Autowired
-    private JokenpoCommand jokenpoCommand;
 
     public Command factory(String command) throws Exception {
         switch (command){

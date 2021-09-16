@@ -11,8 +11,11 @@ import java.util.Optional;
 @Service
 public class UserBetService {
 
-    @Autowired
-    private UserBetRepository userBetRepository;
+    private final UserBetRepository userBetRepository;
+
+    public UserBetService(UserBetRepository userBetRepository) {
+        this.userBetRepository = userBetRepository;
+    }
 
     public UserBet create(UserBet userBet){
         return this.userBetRepository.save(userBet);

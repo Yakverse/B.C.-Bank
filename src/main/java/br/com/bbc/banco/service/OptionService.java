@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class OptionService {
 
-    @Autowired
-    private OptionRepository optionRepository;
+    private final OptionRepository optionRepository;
+
+    public OptionService(OptionRepository optionRepository) {
+        this.optionRepository = optionRepository;
+    }
 
     public Option create(Option option){
         return this.optionRepository.save(option);
