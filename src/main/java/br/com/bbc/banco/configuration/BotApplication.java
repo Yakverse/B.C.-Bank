@@ -76,6 +76,7 @@ public class BotApplication {
         for (Class<? extends Command> aClass : classes) {
             Command command = aClass.newInstance();
             CommandData commandData = new CommandData(command.getName(), command.getDescription());
+            commandData.addOptions(command.getOptions());
 
             commandDataList.add(commandData);
         }
