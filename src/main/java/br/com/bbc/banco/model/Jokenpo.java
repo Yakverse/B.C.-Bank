@@ -28,8 +28,6 @@ public class Jokenpo {
         String pick1 = this.getPlayer1Pick();
         String pick2 = this.getPlayer2Pick();
 
-        System.out.println(pick1);
-        System.out.println(pick2);
         if(pick1.equals(pick2)) return 0;
         switch (pick1){
             case "U+270A":
