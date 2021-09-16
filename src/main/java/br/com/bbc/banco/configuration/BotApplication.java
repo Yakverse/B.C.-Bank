@@ -3,6 +3,7 @@ package br.com.bbc.banco.configuration;
 import br.com.bbc.banco.command.Command;
 import br.com.bbc.banco.enumeration.BotEnumeration;
 import br.com.bbc.banco.event.Events;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 @Configuration
+@Slf4j
 public class BotApplication {
 
     @Autowired
@@ -39,6 +41,7 @@ public class BotApplication {
                 .build();
 
 
+        log.info("Verificando se os comandos precisam ser atualizados");
         CommandListUpdateAction commands = jda.updateCommands();
         List<net.dv8tion.jda.api.interactions.commands.Command> comandosAtuais = jda.retrieveCommands().complete();
         List<CommandData> comandosNovos = addCommands(commands);
@@ -63,7 +66,8 @@ public class BotApplication {
 
         if (!comandosIguais){
             commands.addCommands(comandosNovos).queue();
-        }
+            log.info("Os comandos foram atualizados com sucesso!");
+        } else log.info("Os comandos já estão atualizados");
 
 
    }

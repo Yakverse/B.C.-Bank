@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class CriarCommand extends Command{
 
     @Getter private final String name = "criar";
-    @Getter private final String description = "Criar conta no BBC";
+    @Getter private final String description = "Criar uma conta no BBC";
 
     @Override
     public void execute(SlashCommandEvent event) throws Exception {
