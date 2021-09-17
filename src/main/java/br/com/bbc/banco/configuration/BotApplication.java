@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.security.auth.login.LoginException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -44,25 +45,27 @@ public class BotApplication {
         List<net.dv8tion.jda.api.interactions.commands.Command> comandosAtuais = jda.retrieveCommands().complete();
         List<CommandData> comandosNovos = this.addCommands();
 
-        boolean comandosIguais = true;
-        if (BotEnumeration.UPDATE_COMMANDS.getText() != null && BotEnumeration.UPDATE_COMMANDS.getText().equals("true")) comandosIguais = false;
-        else if (comandosAtuais.size() == comandosNovos.size()) {
-            for (net.dv8tion.jda.api.interactions.commands.Command comandosAtual : comandosAtuais) {
-                for (int j = 0; j < comandosNovos.size(); j++) {
+        Set<String> comandosVerificados = new HashSet<>();
+        if (!(BotEnumeration.UPDATE_COMMANDS.getText() != null && BotEnumeration.UPDATE_COMMANDS.getText().equals("true"))){
+            if (comandosAtuais.size() == comandosNovos.size()) {
+                for (net.dv8tion.jda.api.interactions.commands.Command comandosAtual : comandosAtuais) {
+                    for (CommandData comandoNovo : comandosNovos) {
 
-                    if (comandosAtual.getName().equals(comandosNovos.get(j).getName()) && comandosAtual.getDescription().equals(comandosNovos.get(j).getDescription())) {
-                        if (comandosAtual.getOptions().size() == comandosNovos.get(j).getOptions().size()) break;
-                    }
+                        if (comandosVerificados.contains(comandoNovo.getName())) continue;
 
-                    if (j == (comandosNovos.size() - 1)) {
-                        comandosIguais = false;
+                        if (comandosAtual.getName().equals(comandoNovo.getName()) && comandosAtual.getDescription().equals(comandoNovo.getDescription())) {
+                            if (comandosAtual.getOptions().size() == comandoNovo.getOptions().size()) {
+                                comandosVerificados.add(comandoNovo.getName());
+                                break;
+                            }
+                        }
+
                     }
                 }
             }
-        } else comandosIguais = false;
+        }
 
-
-        if (!comandosIguais){
+        if (comandosVerificados.size() != comandosAtuais.size()){
             commands.addCommands(comandosNovos).queue();
             log.info("Os comandos foram atualizados com sucesso!");
         } else log.info("Os comandos já estão atualizados");

@@ -28,7 +28,7 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 public class TransferirCommand extends Command {
 
     @Getter private final String name = "transferir";
-    @Getter private final String description = "Transfeir dinheiro";
+    @Getter private final String description = "Transfeir dinheiro para alguém";
     @Getter private final List<OptionData> options = Arrays.asList(
             new OptionData(STRING, "valor", "O quanto você vai transferir").setRequired(true),
             new OptionData(USER, "pessoa", "Pessoa que recebe o dinheiro").setRequired(true)
@@ -44,7 +44,7 @@ public class TransferirCommand extends Command {
         event.getChannel().sendMessage(this.process(event.getAuthor(), event.getMessage().getContentRaw().split(" ")[1], event.getMessage().getMentionedUsers().get(0))).queue();
     }
 
-    private MessageEmbed process(net.dv8tion.jda.api.entities.User author, String valorString, net.dv8tion.jda.api.entities.User transferido) throws Exception{
+    private MessageEmbed process(net.dv8tion.jda.api.entities.User author, String valorString, net.dv8tion.jda.api.entities.User transferido){
         MessageEmbed.Field field;
         try{
             if(author.getIdLong() == transferido.getIdLong()) throw new Exception();
@@ -53,9 +53,7 @@ public class TransferirCommand extends Command {
             User para = userService.findOrCreateById(transferido.getIdLong());
             user.transferir(valor, para);
             this.transactionService.update(new Transaction(valor, this.userService.update(user), this.userService.update(para), TransactionType.TRANFERENCIA));
-            transferido.openPrivateChannel().queue(privateChannel -> {
-                privateChannel.sendMessage(new SucessEmbed(author,String.format("Você recebeu uma transferência de %s %.2f", BotEnumeration.CURRENCY.getText(), valor)).build()).queue();
-            });
+            transferido.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(new SucessEmbed(author,String.format("Você recebeu uma transferência de %s %.2f", BotEnumeration.CURRENCY.getText(), valor)).build()).queue());
             Embed embed = new SucessEmbed(author);
             embed.addField(
                     "Transferência realizada com sucesso!",
