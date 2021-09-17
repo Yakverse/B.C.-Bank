@@ -33,7 +33,7 @@ public class Events extends ListenerAdapter {
 
     @SneakyThrows
     @Override
-    public void onSlashCommand(SlashCommandEvent event) {
+    public void onSlashCommand(@NotNull SlashCommandEvent event) {
         commandFactory.factory(event.getName()).execute(event);
     }
 
